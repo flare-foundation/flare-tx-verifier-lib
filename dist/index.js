@@ -969,11 +969,11 @@ function verify2(txHex) {
     txHex = toHex(txHex, false);
     let ctx = _tryRecoverCTx(txHex);
     if (ctx != null) {
-      return _getCTxParams(ctx);
+      return yield _tryGetCTxParams(ctx);
     }
     let ptx = _tryRecoverPTx(txHex);
     if (ptx != null) {
-      return _getPTxParams(ptx);
+      return yield _tryGetPTxParams(ptx);
     }
     return null;
   });
@@ -1015,34 +1015,38 @@ function _getNetwork2(networkId, warnings) {
   }
   return getDescription(networkId);
 }
-function _getCTxParams(tx) {
+function _tryGetCTxParams(tx) {
   return __async(this, null, function* () {
-    let btx = tx.getTransaction();
-    let warnings = /* @__PURE__ */ new Set();
-    _checkCBlockchainId(btx.getNetworkID(), btx.getBlockchainID().toString("hex"), warnings);
-    let network = _getNetwork2(btx.getNetworkID(), warnings);
-    let txType = btx.getTypeName();
-    let type;
-    let params;
-    if (txType === "ExportTx") {
-      type = EXPORT_C;
-      params = _getExportCTxParams(btx, warnings);
-    } else if (txType === "ImportTx") {
-      type = IMPORT_C;
-      params = _getImportCTxParams(btx, warnings);
-    } else {
-      throw new Error("Unkown C-chain transaction type");
+    try {
+      let btx = tx.getTransaction();
+      let warnings = /* @__PURE__ */ new Set();
+      _checkCBlockchainId(btx.getNetworkID(), btx.getBlockchainID().toString("hex"), warnings);
+      let network = _getNetwork2(btx.getNetworkID(), warnings);
+      let txType = btx.getTypeName();
+      let type;
+      let params;
+      if (txType === "ExportTx") {
+        type = EXPORT_C;
+        params = _getExportCTxParams(btx, warnings);
+      } else if (txType === "ImportTx") {
+        type = IMPORT_C;
+        params = _getImportCTxParams(btx, warnings);
+      } else {
+        throw new Error("Unkown C-chain transaction type");
+      }
+      let description = getDescription2(type);
+      let messageToSign = _getMessageToSign(tx);
+      return __spreadProps(__spreadValues({
+        network,
+        type,
+        description
+      }, params), {
+        warnings: Array.from(warnings.values()),
+        messageToSign
+      });
+    } catch (e) {
+      return null;
     }
-    let description = getDescription2(type);
-    let messageToSign = _getMessageToSign(tx);
-    return __spreadProps(__spreadValues({
-      network,
-      type,
-      description
-    }, params), {
-      warnings: Array.from(warnings.values()),
-      messageToSign
-    });
   });
 }
 function _getExportCTxParams(tx, warnings) {
@@ -1120,40 +1124,44 @@ function _getAmountFromEVMOutput(output) {
   let outputBuffer = output.toBuffer();
   return new import_flarejs.BN(bintools.copyFrom(outputBuffer, 20, 28));
 }
-function _getPTxParams(tx) {
+function _tryGetPTxParams(tx) {
   return __async(this, null, function* () {
-    let btx = tx.getTransaction();
-    let warnings = /* @__PURE__ */ new Set();
-    _checkPBlockchainId(btx.getNetworkID(), btx.getBlockchainID().toString("hex"), warnings);
-    let network = _getNetwork2(btx.getNetworkID(), warnings);
-    let txType = btx.getTypeName();
-    let type;
-    let params;
-    if (txType === "AddDelegatorTx") {
-      type = ADD_DELEGATOR_P;
-      params = yield _getAddDelegatorParams(btx, warnings);
-    } else if (txType === "AddValidatorTx") {
-      type = ADD_VALIDATOR_P;
-      params = yield _getAddValidatorParams(btx, warnings);
-    } else if (txType === "ExportTx") {
-      type = EXPORT_P;
-      params = yield _getExportPTx(btx, warnings);
-    } else if (txType === "ImportTx") {
-      type = IMPORT_P;
-      params = yield _getImportPTx(btx, warnings);
-    } else {
-      throw new Error("Unkown P-chain transaction type");
+    try {
+      let btx = tx.getTransaction();
+      let warnings = /* @__PURE__ */ new Set();
+      _checkPBlockchainId(btx.getNetworkID(), btx.getBlockchainID().toString("hex"), warnings);
+      let network = _getNetwork2(btx.getNetworkID(), warnings);
+      let txType = btx.getTypeName();
+      let type;
+      let params;
+      if (txType === "AddDelegatorTx") {
+        type = ADD_DELEGATOR_P;
+        params = yield _getAddDelegatorParams(btx, warnings);
+      } else if (txType === "AddValidatorTx") {
+        type = ADD_VALIDATOR_P;
+        params = yield _getAddValidatorParams(btx, warnings);
+      } else if (txType === "ExportTx") {
+        type = EXPORT_P;
+        params = yield _getExportPTx(btx, warnings);
+      } else if (txType === "ImportTx") {
+        type = IMPORT_P;
+        params = yield _getImportPTx(btx, warnings);
+      } else {
+        throw new Error("Unkown P-chain transaction type");
+      }
+      let description = getDescription2(type);
+      let messageToSign = _getMessageToSign(tx);
+      return __spreadProps(__spreadValues({
+        network,
+        type,
+        description
+      }, params), {
+        warnings: Array.from(warnings.values()),
+        messageToSign
+      });
+    } catch (e) {
+      return null;
     }
-    let description = getDescription2(type);
-    let messageToSign = _getMessageToSign(tx);
-    return __spreadProps(__spreadValues({
-      network,
-      type,
-      description
-    }, params), {
-      warnings: Array.from(warnings.values()),
-      messageToSign
-    });
   });
 }
 function _getAddDelegatorParams(tx, warnings) {

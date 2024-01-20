@@ -20,4 +20,4 @@ interface TxVerificationParameter {
 
 declare function verify(txHex: string): Promise<TxVerification | null>;
 
-export { verify };
+export { type TxVerification, type TxVerificationParameter, verify };

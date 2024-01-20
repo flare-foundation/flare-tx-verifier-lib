@@ -40,12 +40,12 @@ export async function verify(txHex: string): Promise<TxVerification | null> {
 
     let ctx = _tryRecoverCTx(txHex) as UnsignedCTx
     if (ctx != null) {
-        return _tryGetCTxParams(ctx)
+        return await _tryGetCTxParams(ctx)
     }
 
     let ptx = _tryRecoverPTx(txHex) as UnsignedPTx
     if (ptx != null) {
-        return _tryGetPTxParams(ptx)
+        return await _tryGetPTxParams(ptx)
     }
 
     return null
