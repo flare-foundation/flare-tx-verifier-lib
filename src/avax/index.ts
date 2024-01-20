@@ -40,12 +40,12 @@ export async function verify(txHex: string): Promise<TxVerification | null> {
 
     let ctx = _tryRecoverCTx(txHex) as UnsignedCTx
     if (ctx != null) {
-        return _getCTxParams(ctx)
+        return _tryGetCTxParams(ctx)
     }
-    
+
     let ptx = _tryRecoverPTx(txHex) as UnsignedPTx
     if (ptx != null) {
-        return _getPTxParams(ptx)
+        return _tryGetPTxParams(ptx)
     }
 
     return null
@@ -72,12 +72,12 @@ function _tryRecoverPTx(txHex: string): UnsignedPTx | null {
 }
 
 function _getMessageToSign(tx: UnsignedCTx | UnsignedPTx): string {
-    try {        
+    try {
         let signatureRequests = tx.prepareUnsignedHashes(undefined as any)
         if (signatureRequests.length > 0) {
             return utils.toHex(signatureRequests[0].message, true)
         } else {
-            let txBuffer = Buffer.from(tx.toBuffer().toString("hex"),"hex")
+            let txBuffer = Buffer.from(tx.toBuffer().toString("hex"), "hex")
             return utils.toHex(sha256(txBuffer), true)
         }
     } catch {
@@ -92,36 +92,40 @@ function _getNetwork(networkId: number, warnings: Set<string>): string {
     return txnetwork.getDescription(networkId)
 }
 
-async function _getCTxParams(tx: UnsignedCTx) : Promise<TxVerification> {
-    let btx = tx.getTransaction()
+async function _tryGetCTxParams(tx: UnsignedCTx): Promise<TxVerification | null> {
+    try {
+        let btx = tx.getTransaction()
 
-    let warnings = new Set<string>()
+        let warnings = new Set<string>()
 
-    _checkCBlockchainId(btx.getNetworkID(), btx.getBlockchainID().toString("hex"), warnings)
+        _checkCBlockchainId(btx.getNetworkID(), btx.getBlockchainID().toString("hex"), warnings)
 
-    let network = _getNetwork(btx.getNetworkID(), warnings)    
-    let txType = btx.getTypeName()
-    let type: string
-    let params: any
-    if (txType === "ExportTx") {
-        type = txtype.EXPORT_C
-        params = _getExportCTxParams(btx as ExportCTx, warnings)
-    } else if (txType === "ImportTx") {
-        type = txtype.IMPORT_C
-        params = _getImportCTxParams(btx as ImportCTx, warnings)
-    } else {
-        throw new Error("Unkown C-chain transaction type")
-    }
-    let description = txtype.getDescription(type)
-    let messageToSign = _getMessageToSign(tx)
-    
-    return {
-        network,
-        type,
-        description,
-        ...params,
-        warnings: Array.from(warnings.values()),
-        messageToSign
+        let network = _getNetwork(btx.getNetworkID(), warnings)
+        let txType = btx.getTypeName()
+        let type: string
+        let params: any
+        if (txType === "ExportTx") {
+            type = txtype.EXPORT_C
+            params = _getExportCTxParams(btx as ExportCTx, warnings)
+        } else if (txType === "ImportTx") {
+            type = txtype.IMPORT_C
+            params = _getImportCTxParams(btx as ImportCTx, warnings)
+        } else {
+            throw new Error("Unkown C-chain transaction type")
+        }
+        let description = txtype.getDescription(type)
+        let messageToSign = _getMessageToSign(tx)
+
+        return {
+            network,
+            type,
+            description,
+            ...params,
+            warnings: Array.from(warnings.values()),
+            messageToSign
+        }
+    } catch {
+        return null
     }
 }
 
@@ -139,7 +143,7 @@ function _getExportCTxParams(tx: ExportCTx, warnings: Set<string>): any {
 
     let outputs = tx.getExportedOutputs()
     let exportAmounts = new Array<BN>()
-    let exportRecipients = new Array<string>()    
+    let exportRecipients = new Array<string>()
     for (let i = 0; i < outputs.length; i++) {
         let output = outputs[i].getOutput() as CAmountOutput
         let addresses = output.getAddresses()
@@ -213,41 +217,45 @@ function _getAmountFromEVMOutput(output: EVMOutput): BN {
     return new BN(bintools.copyFrom(outputBuffer, 20, 28))
 }
 
-async function _getPTxParams(tx: UnsignedPTx): Promise<TxVerification> {
-    let btx = tx.getTransaction()
+async function _tryGetPTxParams(tx: UnsignedPTx): Promise<TxVerification | null> {
+    try {
+        let btx = tx.getTransaction()
 
-    let warnings = new Set<string>()
+        let warnings = new Set<string>()
 
-    _checkPBlockchainId(btx.getNetworkID(), btx.getBlockchainID().toString("hex"), warnings)
+        _checkPBlockchainId(btx.getNetworkID(), btx.getBlockchainID().toString("hex"), warnings)
 
-    let network = _getNetwork(btx.getNetworkID(), warnings)
-    let txType = btx.getTypeName()
-    let type: string
-    let params: any
-    if (txType === "AddDelegatorTx") {
-        type = txtype.ADD_DELEGATOR_P
-        params = await _getAddDelegatorParams(btx as AddDelegatorTx, warnings)
-    } else if (txType === "AddValidatorTx") {
-        type = txtype.ADD_VALIDATOR_P
-        params = await _getAddValidatorParams(btx as AddValidatorTx, warnings)
-    } else if (txType === "ExportTx") {
-        type = txtype.EXPORT_P
-        params = await _getExportPTx(btx as ExportPTx, warnings)
-    } else if (txType === "ImportTx") {
-        type = txtype.IMPORT_P
-        params = await _getImportPTx(btx as ImportPTx, warnings)
-    } else {
-        throw new Error("Unkown P-chain transaction type")
-    }
-    let description = txtype.getDescription(type)
-    let messageToSign = _getMessageToSign(tx)
-    return {
-        network,
-        type,
-        description,
-        ...params,
-        warnings: Array.from(warnings.values()),
-        messageToSign
+        let network = _getNetwork(btx.getNetworkID(), warnings)
+        let txType = btx.getTypeName()
+        let type: string
+        let params: any
+        if (txType === "AddDelegatorTx") {
+            type = txtype.ADD_DELEGATOR_P
+            params = await _getAddDelegatorParams(btx as AddDelegatorTx, warnings)
+        } else if (txType === "AddValidatorTx") {
+            type = txtype.ADD_VALIDATOR_P
+            params = await _getAddValidatorParams(btx as AddValidatorTx, warnings)
+        } else if (txType === "ExportTx") {
+            type = txtype.EXPORT_P
+            params = await _getExportPTx(btx as ExportPTx, warnings)
+        } else if (txType === "ImportTx") {
+            type = txtype.IMPORT_P
+            params = await _getImportPTx(btx as ImportPTx, warnings)
+        } else {
+            throw new Error("Unkown P-chain transaction type")
+        }
+        let description = txtype.getDescription(type)
+        let messageToSign = _getMessageToSign(tx)
+        return {
+            network,
+            type,
+            description,
+            ...params,
+            warnings: Array.from(warnings.values()),
+            messageToSign
+        }
+    } catch {
+        return null
     }
 }
 
@@ -255,7 +263,7 @@ async function _getAddDelegatorParams(tx: AddDelegatorTx, warnings: Set<string>)
     return _getStakeTxData(tx, warnings)
 }
 
-async function _getAddValidatorParams(tx: AddValidatorTx, warnings: Set<string>): Promise<any> {        
+async function _getAddValidatorParams(tx: AddValidatorTx, warnings: Set<string>): Promise<any> {
     return _getStakeTxData(tx, warnings)
 }
 
@@ -272,11 +280,11 @@ async function _getStakeTxData(tx: AddDelegatorTx | AddValidatorTx, warnings: Se
         recipients.length == 1 && !recipients[0].includes(",") ? recipients[0] : undefined,
         undefined,
         warnings
-    )    
-    
+    )
+
     let stakeAmount = tx.getStakeAmount()
     let fee = sentAmount.sub(_sumValues(receivedAmounts)).sub(stakeAmount)
-    
+
     let [stakeoutRecipients, stakeoutAmounts] = _getPOutputsData(
         tx.getNetworkID(),
         tx.getStakeOuts(),
@@ -330,7 +338,7 @@ async function _getExportPTx(tx: ExportPTx, warnings: Set<string>): Promise<any>
         warnings
     )
     _compareRecipients(exportRecipients, utxoRecipients, warnings)
-    
+
     let utxoSentAmount = await _getPInputsData(
         networkId,
         tx.getIns(),
@@ -352,7 +360,7 @@ async function _getImportPTx(tx: ImportPTx, warnings: Set<string>): Promise<any>
     let networkId = tx.getNetworkID()
 
     _checkCBlockchainId(networkId, tx.getSourceChain().toString("hex"), warnings)
-    
+
     let [recipients, receivedAmounts] = _getPOutputsData(
         tx.getNetworkID(),
         tx.getOuts(),
@@ -366,7 +374,7 @@ async function _getImportPTx(tx: ImportPTx, warnings: Set<string>): Promise<any>
         _getCBlockchainId(networkId),
         warnings
     )
-    
+
     let importAmount = await _getPInputsData(
         networkId,
         tx.getImportInputs(),
@@ -376,7 +384,7 @@ async function _getImportPTx(tx: ImportPTx, warnings: Set<string>): Promise<any>
     )
 
     let fee = importAmount.add(sentAmount).sub(_sumValues(receivedAmounts))
-    
+
     return {
         recipients,
         values: receivedAmounts.map(a => _gweiToWei(a).toString()),
@@ -393,13 +401,13 @@ async function _getPInputsData(
 ): Promise<BN> {
     let utxos = address ? (await _getPUTXOs(networkId, address, blockchainId)) : new Array<any>()
     let sentAmount = new BN(0)
-    for (let input of inputs) {        
-        let ai = input.getInput() as PAmountInput        
+    for (let input of inputs) {
+        let ai = input.getInput() as PAmountInput
         sentAmount = sentAmount.add(ai.getAmount())
         _checkPAssetId(networkId, input.getAssetID().toString("hex"), warnings)
         if (address) {
             let txId = input.getTxID().toString("hex")
-            let outputIdx = parseInt(input.getOutputIdx().toString("hex"),16)
+            let outputIdx = parseInt(input.getOutputIdx().toString("hex"), 16)
             if (!utxos.find(u => u.txId === txId && u.outputIdx === outputIdx)) {
                 warnings.add(warning.FUNDS_NOT_RETURNED)
             }
@@ -445,15 +453,17 @@ async function _getPUTXOs(
 ): Promise<Array<any>> {
     let avalanche = _getAvalanche(networkId)
     let utxos = (await avalanche.PChain().getUTXOs(`P-${address}`, blockchainId)).utxos
-    return utxos.getAllUTXOs().map(u => { return {
-        txId: u.getTxID().toString("hex"),
-        outputIdx: parseInt(u.getOutputIdx().toString("hex"), 16)
-    }})
+    return utxos.getAllUTXOs().map(u => {
+        return {
+            txId: u.getTxID().toString("hex"),
+            outputIdx: parseInt(u.getOutputIdx().toString("hex"), 16)
+        }
+    })
 }
 
 async function _checkNodeId(tx: AddDelegatorTx, warnings: Set<string>) {
     let avalanche = _getAvalanche(tx.getNetworkID())
-    
+
     let stakes = new Array<any>
     let cvalidators = await avalanche.PChain().getCurrentValidators() as any
     if (cvalidators && cvalidators.validators) {
@@ -572,7 +582,7 @@ function _sumValues(values: Array<BN>): BN {
 }
 
 function _addressToBech(networkId: number, addressHex: string): string {
-    return bech32.encode(txnetwork.getHRP(networkId), bech32.toWords(Buffer.from(addressHex,"hex")))
+    return bech32.encode(txnetwork.getHRP(networkId), bech32.toWords(Buffer.from(addressHex, "hex")))
 }
 
 function _gweiToWei(gweiValue: BN): BN {
