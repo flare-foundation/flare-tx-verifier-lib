@@ -11,11 +11,11 @@ This library mitigates the main challenges encountered during transaction signin
 
 To install the library, run:
 ```
-npm install flare-tx-verifier-lib
+npm install @flarenetwork/flare-tx-verifier-lib
 ```
 To verify a transaction hash (`txHex`), use asynchronous function `verify` that resolves to a [`TxVerification`](src/interface.ts) object or `null`:
 ```
-import { verify } from "flare-tx-verifier-lib"
+import { verify } from "@flarenetwork/flare-tx-verifier-lib"
 
 let verification = await verify(txHex)
 ```
