@@ -48,11 +48,15 @@ function _parseContract(contract: any): AbiContractData | null {
 }
 
 async function _get(network: number, path: string): Promise<any> {
-    let url = `${settings.EXPLORER[network]}${path}`
-    let data = await fetch(url)
-    let response = await data.json() as Response
-    if (response.status !== "1") {
-        throw new Error(response.message)
+    if (network in settings.EXPLORER) {
+        let url = `${settings.EXPLORER[network]}${path}`
+        let data = await fetch(url)
+        let response = await data.json() as Response
+        if (response.status !== "1") {
+            throw new Error(response.message)
+        }
+        return response.result
+    } else {
+        return []
     }
-    return response.result
 }
