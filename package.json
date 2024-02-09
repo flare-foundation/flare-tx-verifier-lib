@@ -1,27 +1,25 @@
 {
   "name": "@flarenetwork/flare-tx-verifier-lib",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A library for verifying Flare C-chain and P-chain transactions.",
-  "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
+  "main": "dist/index.js",
   "files": [
-    "dist"
+    "/dist"
   ],
+  "types": "dist/index.d.ts",
   "homepage": "https://github.com/flare-foundation/flare-tx-verifier-lib",
   "repository": {
     "type": "git",
     "url": "https://github.com/flare-foundation/flare-tx-verifier-lib"
   },
   "scripts": {
-    "build": "tsup",
+    "build": "rm -rf dist/ && npx tsc -b && cp -r ./build/src ./dist && rm -rf build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Flare Network",
   "license": "MIT",
   "devDependencies": {
     "ts-node": "^10.9.2",
-    "tsup": "^8.0.1",
     "typescript": "^5.3.3"
   },
   "dependencies": {

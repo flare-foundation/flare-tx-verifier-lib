@@ -26,7 +26,7 @@ function _getDataFromRegistry(
     network: number,
     address: string
 ): AbiContractData | null {
-    return address in registry[network] ? registry[network][address] : null
+    return (network in registry && address in registry[network]) ? registry[network][address] : null
 }
 
 async function _getDataFromExplorer(
