@@ -3,6 +3,7 @@ import { verify as verifyEvm } from "./evm"
 import { verify as verifyAvax } from "./avax"
 
 export * from "./interface"
+export * from "./txtype"
 
 export async function verify(txHex: string): Promise<TxVerification | null> {
     let verification: TxVerification | null
