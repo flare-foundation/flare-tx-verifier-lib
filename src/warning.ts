@@ -1,5 +1,4 @@
 export const UNKOWN_NETWORK = "Transaction to unkown network."
-export const FEE_NOT_SET = "Transaction fee not specified. It should be calculated by your wallet."
 export const FUNDS_LOCKED = "Funds will be locked after transfer."
 export const MULTIPLE_RECIPIENTS = "Multiple recipient addresses."
 export const MULTIPLE_SIGNERS = "One or more transaction outputs specify multiple signers."
