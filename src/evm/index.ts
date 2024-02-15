@@ -18,7 +18,7 @@ export async function verify(txHex: string): Promise<TxVerification | null> {
         let description = txtype.getDescription(type)
         let recipient = _getRecipient(tx)
         let value = _getValue(tx)
-        let fee = _getMaxFee(tx, warnings)
+        let fee = _getMaxFee(tx)
         let contract = await _getContract(tx)
         let messageToSign = tx.unsignedHash
 
@@ -62,7 +62,7 @@ function _getValue(tx: Transaction): string {
     return tx.value.toString()
 }
 
-function _getMaxFee(tx: Transaction, warnings: Set<string>): string | undefined {
+function _getMaxFee(tx: Transaction): string | undefined {
     let maxFee = BigInt(0)
     if (tx.gasPrice) {
         maxFee = tx.gasLimit * tx.gasPrice
@@ -70,7 +70,6 @@ function _getMaxFee(tx: Transaction, warnings: Set<string>): string | undefined 
         maxFee = tx.gasLimit * tx.maxFeePerGas
     }
     if (maxFee === BigInt(0)) {
-        warnings.add(warning.FEE_NOT_SET)
         return undefined
     } else {
         return maxFee.toString()
