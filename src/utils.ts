@@ -19,3 +19,19 @@ export function isHex(value: string): boolean {
 export function isZeroHex(value: string): boolean {
     return /^(0x)?(0+)?$/.test(value)
 }
+
+export function isGZipped(value: string): boolean {
+    return toHex(value, false).startsWith("1f8b08")
+}
+
+export async function decompressGZip(value: string) {
+    let decompressionStream = new DecompressionStream("gzip");
+    let decompressedStream = new ReadableStream({
+      start(controller) {
+        controller.enqueue(Buffer.from(value, "hex"));
+        controller.close();
+      },
+    }).pipeThrough(decompressionStream);
+    let decompressedText = await new Response(decompressedStream).text();
+    return decompressedText;
+}

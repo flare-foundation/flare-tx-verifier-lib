@@ -19,6 +19,7 @@ import { verify } from "@flarenetwork/flare-tx-verifier-lib"
 
 let verification = await verify(txHex)
 ```
+For convenience, the input `txHex` can be compressed with GZIP, but this is not neccessary.
 
 ## About verification process
 

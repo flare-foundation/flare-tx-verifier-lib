@@ -32,10 +32,6 @@ import { Defaults } from "@flarenetwork/flarejs/dist/utils"
 const bintools = BinTools.getInstance()
 
 export async function verify(txHex: string): Promise<TxVerification | null> {
-    if (!utils.isHex(txHex)) {
-        return null
-    }
-
     txHex = utils.toHex(txHex, false)
 
     let ctx = _tryRecoverCTx(txHex) as UnsignedCTx
