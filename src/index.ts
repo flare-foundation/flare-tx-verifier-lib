@@ -9,7 +9,7 @@ export * from "./txtype"
 export async function verify(txHex: string): Promise<TxVerification | null> {
     let verification: TxVerification | null
 
-    if (utils.isHex(txHex)) {
+    if (!utils.isHex(txHex)) {
         return null
     }
 
