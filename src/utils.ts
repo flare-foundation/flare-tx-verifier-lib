@@ -28,10 +28,10 @@ export async function decompressGZip(value: string) {
     let decompressionStream = new DecompressionStream("gzip");
     let decompressedStream = new ReadableStream({
       start(controller) {
-        controller.enqueue(Buffer.from(value, "hex"));
+        controller.enqueue(Buffer.from(value,"hex"));
         controller.close();
       },
     }).pipeThrough(decompressionStream);
-    let decompressedText = await new Response(decompressedStream).text();
-    return decompressedText;
+    let decompressedValue = await new Response(decompressedStream).arrayBuffer();
+    return Buffer.from(decompressedValue).toString("hex");
 }
