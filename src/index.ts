@@ -6,18 +6,16 @@ import * as utils from "./utils"
 export * from "./interface"
 export * from "./txtype"
 
-export async function verify(txHex: string): Promise<TxVerification | null> {
-    let verification: TxVerification | null
-
-    if (!utils.isHex(txHex)) {
+export async function verify(input: string): Promise<TxVerification | null> {
+    let txHex = await _tryConvertToTxHex(input)
+    
+    if (txHex == null) {
         return null
     }
 
-    if (utils.isGZipped(txHex)) {
-        try { txHex = await utils.decompressGZip(txHex) } catch { }
-    }
+    let verification: TxVerification | null
     
-    verification= await verifyEvm(txHex)
+    verification = await verifyEvm(txHex)
     if (verification != null) {
         return verification
     }
@@ -28,4 +26,17 @@ export async function verify(txHex: string): Promise<TxVerification | null> {
     }
 
     return null
+}
+
+async function _tryConvertToTxHex(input: string): Promise<string | null> {
+    if (utils.isBase64(input)) {
+        try { input = utils.base64ToHex(input) } catch { }
+    }
+    if (!utils.isHex(input)) {
+        return null
+    }
+    if (utils.isGZipped(input)) {
+        try { input = await utils.decompressGZip(input) } catch { }
+    }
+    return input
 }

@@ -1,7 +1,7 @@
 import { verify } from "../src"
 
 async function main() {
-    let txHex = process.argv[2].trim().toLowerCase()
+    let txHex = process.argv[2].trim()
     let verification = await verify(txHex)
     if (verification == null) {
         console.log("Transaction verification did not succeed")
