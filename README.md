@@ -13,12 +13,13 @@ To install the library, run:
 ```
 npm install @flarenetwork/flare-tx-verifier-lib
 ```
-To verify a transaction hash (`txHex`), use asynchronous function `verify` that resolves to a [`TxVerification`](src/interface.ts) object or `null`:
+To verify a transaction (`input`), use asynchronous function `verify` that resolves to a [`TxVerification`](src/interface.ts) object or `null`:
 ```
 import { verify } from "@flarenetwork/flare-tx-verifier-lib"
 
-let verification = await verify(txHex)
+let verification = await verify(input)
 ```
+The parameter `input` is a base64 or hex encoded unsigned C-chain or P-chain transaction. For convenience, it can also be a base64 or hex encoded GZIP compression of the transaction.
 
 ## About verification process
 
