@@ -29,7 +29,7 @@ export async function verify(input: string): Promise<TxVerification | null> {
 }
 
 async function _tryConvertToTxHex(input: string): Promise<string | null> {
-    if (utils.isBase64(input)) {
+    if (!utils.isHex(input) && utils.isBase64(input)) {
         try { input = utils.base64ToHex(input) } catch { }
     }
     if (!utils.isHex(input)) {
