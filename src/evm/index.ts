@@ -3,7 +3,7 @@ import * as txtype from "../txtype"
 import * as utils from "../utils"
 import * as warning from "../warning"
 import { Transaction } from "ethers";
-import { getContractData, isFlareContract } from "./contract";
+import { getContractData, isContract, isFlareContract } from "./contract";
 import { TxVerification, TxVerificationParameter } from "../interface";
 
 export async function verify(txHex: string): Promise<TxVerification | null> {
@@ -14,12 +14,12 @@ export async function verify(txHex: string): Promise<TxVerification | null> {
         let warnings = new Set<string>()
 
         let network = _getNetwork(tx, warnings)
-        let type = _getType(tx)
+        let type = await _getType(tx)
         let description = txtype.getDescription(type)
         let recipient = _getRecipient(tx)
         let value = _getValue(tx)
         let fee = _getMaxFee(tx)
-        let contract = await _getContract(tx)
+        let contract = await _getContract(tx, type)
         let messageToSign = tx.unsignedHash
 
         return {
@@ -46,16 +46,20 @@ function _getNetwork(tx: Transaction, warnings: Set<string>): string {
     return txnetwork.getDescription(chainId)
 }
 
-function _getType(tx: Transaction): string {
-    if (utils.isZeroHex(tx.data)) {
-        return txtype.TRANSFER_C
-    } else {
+async function _getType(tx: Transaction): Promise<string> {
+    if (!utils.isZeroHex(tx.data)) {
         return txtype.CONTRACT_CALL_C
+    } else if (!txnetwork.isKnownNetwork(Number(tx.chainId))) {
+        return txtype.TRANSFER_C // may be inaccurate
+    } else if (await isContract(Number(tx.chainId), tx.to)) {
+        return txtype.CONTRACT_CALL_C
+    } else {
+        return txtype.TRANSFER_C
     }
 }
 
 function _getRecipient(tx: Transaction): string {
-    return tx.to ? tx.to.toLowerCase() : ""
+    return tx.to ? tx.to : ""
 }
 
 function _getValue(tx: Transaction): string {
@@ -76,8 +80,8 @@ function _getMaxFee(tx: Transaction): string | undefined {
     }
 }
 
-async function _getContract(tx: Transaction): Promise<any> {
-    if (_getType(tx) !== txtype.CONTRACT_CALL_C) {
+async function _getContract(tx: Transaction, type: string): Promise<any> {
+    if (type !== txtype.CONTRACT_CALL_C) {
         return {}
     }
 
@@ -90,7 +94,7 @@ async function _getContract(tx: Transaction): Promise<any> {
     let chainId = Number(tx.chainId)
 
     contractData = tx.data
-    if (tx.to != null) {        
+    if (tx.to != null && txnetwork.isKnownNetwork(chainId)) {        
         let contract = await getContractData(chainId, tx.to!)
         if (contract) {
             contractName = contract.name

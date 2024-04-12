@@ -6,7 +6,7 @@
       "type": "transferC",
       "description": "Funds transfer on C-chain",
       "recipients": [
-        "0xf24309f7c0dddc39796a3c51afdf3ba5f0364879"
+        "0xF24309f7C0DddC39796A3c51afdF3bA5f0364879"
       ],
       "values": [
         "1000000000000000000"
@@ -23,7 +23,7 @@
       "type": "transferC",
       "description": "Funds transfer on C-chain",
       "recipients": [
-        "0xf24309f7c0dddc39796a3c51afdf3ba5f0364879"
+        "0xF24309f7C0DddC39796A3c51afdF3bA5f0364879"
       ],
       "values": [
         "1000000000000000000"
@@ -39,7 +39,7 @@
       "type": "contractCallC",
       "description": "Contract call on C-chain",
       "recipients": [
-        "0x33913ace907f682e305f36d7538d3ccd37e2ca5b"
+        "0x33913AcE907F682E305f36d7538D3cCd37E2cA5B"
       ],
       "values": [
         "0"
@@ -78,7 +78,7 @@
       "type": "contractCallC",
       "description": "Contract call on C-chain",
       "recipients": [
-        "0x85627d71921ae25769f5370e482ada5e1e418d37"
+        "0x85627d71921AE25769f5370E482AdA5E1e418d37"
       ],
       "values": [
         "0"
@@ -117,7 +117,7 @@
       "type": "contractCallC",
       "description": "Contract call on C-chain",
       "recipients": [
-        "0x85627d71921ae25769f5370e482ada5e1e418d37"
+        "0x85627d71921AE25769f5370E482AdA5E1e418d37"
       ],
       "values": [
         "0"
@@ -148,7 +148,7 @@
       "type": "contractCallC",
       "description": "Contract call on C-chain",
       "recipients": [
-        "0x258e20bdbb2d891521308d2af381b1bd962b67b5"
+        "0x258E20bdbb2d891521308d2af381B1BD962B67B5"
       ],
       "values": [
         "0"
@@ -179,7 +179,7 @@
       "type": "contractCallC",
       "description": "Contract call on C-chain",
       "recipients": [
-        "0x461c4219d5fcaf0fea304f57a4b0f8061f08064a"
+        "0x461c4219d5fcAF0fEA304F57a4b0f8061f08064A"
       ],
       "values": [
         "100000000000000000000"
@@ -206,7 +206,7 @@
       "type": "contractCallC",
       "description": "Contract call on C-chain",
       "recipients": [
-        "0x790525b93fa4bfd3a586b68c5f41c113645f8af6"
+        "0x790525B93Fa4BFd3A586b68C5F41c113645f8AF6"
       ],
       "values": [
         "100000000000000000000"
@@ -233,7 +233,7 @@
       "type": "contractCallC",
       "description": "Contract call on C-chain",
       "recipients": [
-        "0x725cd5e69388515029bcbf9f8ae2cc47f397cd64"
+        "0x725cd5E69388515029BCBF9F8aE2cc47f397CD64"
       ],
       "values": [
         "0"
@@ -255,7 +255,7 @@
       "type": "contractCallC",
       "description": "Contract call on C-chain",
       "recipients": [
-        "0xfd36176c63da52e783a347de3544b0b44c7054a6"
+        "0xfD36176C63dA52E783a347DE3544B0b44C7054a6"
       ],
       "values": [
         "0"
@@ -294,7 +294,7 @@
       "type": "contractCallC",
       "description": "Contract call on C-chain",
       "recipients": [
-        "0xb01fe5d7d361cff885895ce433bca0f1cc379bae"
+        "0xB01fe5d7D361cfF885895Ce433BCa0f1CC379BaE"
       ],
       "values": [
         "1000000000000000000"
@@ -325,7 +325,7 @@
       "type": "contractCallC",
       "description": "Contract call on C-chain",
       "recipients": [
-        "0xb01fe5d7d361cff885895ce433bca0f1cc379bae"
+        "0xB01fe5d7D361cfF885895Ce433BCa0f1CC379BaE"
       ],
       "values": [
         "0"
@@ -358,6 +358,26 @@
     }
   },
   {
+    "txHex": "0x02f47235850c5115f1008517f551650082520894c67dce33d7a8efa5ffeb961899c73fe01bce9273880de0b6b3a764000080c0808080",
+    "txVerification": {
+      "network": "Flare Testnet Coston2",
+      "type": "contractCallC",
+      "description": "Contract call on C-chain",
+      "recipients": [
+        "0xC67DCE33D7A8efA5FfEB961899C73fe01bCe9273"
+      ],
+      "values": [
+        "1000000000000000000"
+      ],
+      "fee": "2160900000000000",
+      "contractName": "WNat",
+      "contractData": "0x",
+      "isFlareNetworkContract": true,
+      "warnings": [],
+      "messageToSign": "0xf694b4f08049d72fb1aea1e88cada1c40ea4ce99514a0ad9cd6d128ef351c619"
+    }
+  },
+  {
     "txHex": "0x0000000000010000007278db5c30bed04c05ce209179812850bbb3fe6d46d7eef3744d814c0da55524790000000000000000000000000000000000000000000000000000000000000000000000018ab7028638854ae968ef5174996c17d010af4bd5000000003bae54ee58734f94af871c3d131b56131b6fb7a0291eacadd261e69dfb42a9cdf6f7fddd00000000000000310000000158734f94af871c3d131b56131b6fb7a0291eacadd261e69dfb42a9cdf6f7fddd00000007000000003baa0c4000000000000000000000000100000001237605140994862f6bd6f3a3740ee6f586bbdaff",
     "txVerification": {
       "network": "Flare Testnet Coston2",
@@ -387,7 +407,9 @@
         "2001000000000000000"
       ],
       "fee": "1000000000000000",
-      "warnings": [],
+      "warnings": [
+        "Funds might not be transferred to the signer address."
+      ],
       "messageToSign": "0xdc2ad171894e4421166ffa231a20a58c58c23727babe9e6f59b3212c73ae34ca"
     }
   },
@@ -465,7 +487,7 @@
       "type": "contractCallC",
       "description": "Contract call on C-chain",
       "recipients": [
-        "0x3f55a3c8012c26b140acc23d061e7c4626d64e01"
+        "0x3F55A3c8012C26B140AcC23d061E7c4626d64e01"
       ],
       "values": [
         "0"
@@ -486,7 +508,7 @@
       "type": "contractCallC",
       "description": "Contract call on C-chain",
       "recipients": [
-        "0x3f55a3c8012c26b140acc23d061e7c4626d64e01"
+        "0x3F55A3c8012C26B140AcC23d061E7c4626d64e01"
       ],
       "values": [
         "0"
@@ -507,7 +529,7 @@
       "type": "contractCallC",
       "description": "Contract call on C-chain",
       "recipients": [
-        "0xc67dce33d7a8efa5ffeb961899c73fe01bce9273"
+        "0xC67DCE33D7A8efA5FfEB961899C73fe01bCe9273"
       ],
       "values": [
         "1000000000000000000"

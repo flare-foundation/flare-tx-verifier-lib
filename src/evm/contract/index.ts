@@ -22,6 +22,13 @@ export async function isFlareContract(
     return chain.isFlareNetworkContract(network, address)
 }
 
+export async function isContract(
+    network: number,
+    address: string
+): Promise<boolean> {
+    return chain.isContract(network, address)
+}
+
 function _getDataFromRegistry(
     network: number,
     address: string
