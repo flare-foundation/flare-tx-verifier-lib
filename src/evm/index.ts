@@ -47,6 +47,21 @@ function _getNetwork(tx: Transaction, warnings: Set<string>): string {
     return txnetwork.getDescription(chainId)
 }
 
+function _getRecipient(tx: Transaction): string {
+    return tx.to ? tx.to : ""
+}
+
+async function _isRecipientFlrNetContract(tx: Transaction): Promise<boolean> {
+    if (tx.to == null) {
+        return false
+    }
+    let chainId = Number(tx.chainId)
+    if (!txnetwork.isKnownNetwork(chainId)) {
+        return false
+    }
+    return await isFlareContract(chainId, tx.to!)
+}
+
 async function _getType(tx: Transaction, isRecipientFlrNetContract: boolean): Promise<string> {
     if (isRecipientFlrNetContract) {
         return txtype.CONTRACT_CALL_C
@@ -71,10 +86,6 @@ async function _getType(tx: Transaction, isRecipientFlrNetContract: boolean): Pr
     }
 }
 
-function _getRecipient(tx: Transaction): string {
-    return tx.to ? tx.to : ""
-}
-
 function _getValue(tx: Transaction): string {
     return tx.value.toString()
 }
@@ -91,17 +102,6 @@ function _getMaxFee(tx: Transaction): string | undefined {
     } else {
         return maxFee.toString()
     }
-}
-
-async function _isRecipientFlrNetContract(tx: Transaction): Promise<boolean> {
-    if (tx.to == null) {
-        return false
-    }
-    let chainId = Number(tx.chainId)
-    if (!txnetwork.isKnownNetwork(chainId)) {
-        return false
-    }
-    return await isFlareContract(chainId, tx.to!)
 }
 
 async function _getContract(
