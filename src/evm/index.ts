@@ -14,12 +14,13 @@ export async function verify(txHex: string): Promise<TxVerification | null> {
         let warnings = new Set<string>()
 
         let network = _getNetwork(tx, warnings)
-        let type = await _getType(tx)
-        let description = txtype.getDescription(type)
         let recipient = _getRecipient(tx)
+        let isRecipientFlrNetContract = await _isRecipientFlrNetContract(tx)
+        let type = await _getType(tx, isRecipientFlrNetContract)
+        let description = txtype.getDescription(type)
         let value = _getValue(tx)
         let fee = _getMaxFee(tx)
-        let contract = await _getContract(tx, type)
+        let contract = await _getContract(tx, type, isRecipientFlrNetContract)
         let messageToSign = tx.unsignedHash
 
         return {
@@ -46,15 +47,27 @@ function _getNetwork(tx: Transaction, warnings: Set<string>): string {
     return txnetwork.getDescription(chainId)
 }
 
-async function _getType(tx: Transaction): Promise<string> {
-    if (!utils.isZeroHex(tx.data)) {
+async function _getType(tx: Transaction, isRecipientFlrNetContract: boolean): Promise<string> {
+    if (isRecipientFlrNetContract) {
         return txtype.CONTRACT_CALL_C
-    } else if (!txnetwork.isKnownNetwork(Number(tx.chainId))) {
-        return txtype.TRANSFER_C // may be inaccurate
-    } else if (await isContract(Number(tx.chainId), tx.to)) {
-        return txtype.CONTRACT_CALL_C
+    }
+    if (tx.to == null) {
+        return txtype.CONTRACT_CALL_C // contract creation
+    }
+    let chainId = Number(tx.chainId)
+    if (txnetwork.isKnownNetwork(chainId)) {
+        if (await isContract(Number(tx.chainId), tx.to)) {
+            return txtype.CONTRACT_CALL_C
+        } else {
+            return txtype.TRANSFER_C
+        }
     } else {
-        return txtype.TRANSFER_C
+        // may be inaccurate
+        if (utils.isZeroHex(tx.data)) {
+            return txtype.TRANSFER_C
+        } else {
+            return txtype.CONTRACT_CALL_C
+        }
     }
 }
 
@@ -80,7 +93,22 @@ function _getMaxFee(tx: Transaction): string | undefined {
     }
 }
 
-async function _getContract(tx: Transaction, type: string): Promise<any> {
+async function _isRecipientFlrNetContract(tx: Transaction): Promise<boolean> {
+    if (tx.to == null) {
+        return false
+    }
+    let chainId = Number(tx.chainId)
+    if (!txnetwork.isKnownNetwork(chainId)) {
+        return false
+    }
+    return await isFlareContract(chainId, tx.to!)
+}
+
+async function _getContract(
+    tx: Transaction,
+    type: string,
+    isRecipientFlrNetContract: boolean
+): Promise<any> {
     if (type !== txtype.CONTRACT_CALL_C) {
         return {}
     }
@@ -94,11 +122,11 @@ async function _getContract(tx: Transaction, type: string): Promise<any> {
     let chainId = Number(tx.chainId)
 
     contractData = tx.data
-    if (tx.to != null && txnetwork.isKnownNetwork(chainId)) {        
+    isFlareNetworkContract = isRecipientFlrNetContract
+    if (tx.to != null && txnetwork.isKnownNetwork(chainId)) {
         let contract = await getContractData(chainId, tx.to!)
         if (contract) {
             contractName = contract.name
-            isFlareNetworkContract = contract.isFlareNetworkContract
             let txData = { data: tx.data, value: tx.value }
             let description = contract.interface.parseTransaction(txData)
             if (description) {
@@ -112,8 +140,6 @@ async function _getContract(tx: Transaction, type: string): Promise<any> {
                     })
                 }
             }
-        } else {
-            isFlareNetworkContract = await isFlareContract(chainId, tx.to!)
         }
     }
 
