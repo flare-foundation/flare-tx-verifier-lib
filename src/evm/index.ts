@@ -71,7 +71,7 @@ async function _getType(tx: Transaction, isRecipientFlrNetContract: boolean): Pr
     }
     let chainId = Number(tx.chainId)
     if (txnetwork.isKnownNetwork(chainId)) {
-        if (await isContract(Number(tx.chainId), tx.to)) {
+        if (await isContract(chainId, tx.to)) {
             return txtype.CONTRACT_CALL_C
         } else {
             return txtype.TRANSFER_C
