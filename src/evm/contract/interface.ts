@@ -18,6 +18,5 @@ export interface AbiContractData extends BaseContractData {
 }
 
 export interface ContractData extends AbiContractData {
-    isFlareNetworkContract: boolean,
     interface: Interface
 }

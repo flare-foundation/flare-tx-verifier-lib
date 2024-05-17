@@ -1,6 +1,6 @@
 {
   "name": "@flarenetwork/flare-tx-verifier-lib",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "A library for verifying Flare C-chain and P-chain transactions.",
   "main": "dist/index.js",
   "files": [
@@ -20,11 +20,11 @@
   "license": "MIT",
   "devDependencies": {
     "ts-node": "^10.9.2",
-    "typescript": "^5.3.3"
+    "typescript": "^5.4.5"
   },
   "dependencies": {
     "@flarenetwork/flarejs": "^1.2.1",
     "bech32": "^2.0.0",
-    "ethers": "^6.10.0"
+    "ethers": "^6.11.1"
   }
 }
