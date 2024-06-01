@@ -1,4 +1,4 @@
-import { Transaction, ethers } from "ethers";
+import { Transaction } from "ethers";
 import { verify } from "../src"
 import * as txnetwork from "../src/txnetwork"
 import * as utils from "../src/utils"
@@ -17,7 +17,7 @@ async function main() {
     }
     let data = process.argv[4].trim()
     if (!utils.isHex(data)) {
-        console.log("The third arguments is not a data hex");
+        console.log("The third arguments is not data in hex");
         return
     }
     let tx = Transaction.from({ chainId, to, data })
