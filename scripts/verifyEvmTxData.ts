@@ -4,7 +4,6 @@ import * as txnetwork from "../src/txnetwork"
 import * as utils from "../src/utils"
 
 async function main() {
-    console.log(process.argv[2].trim())
     let chainId = parseInt(process.argv[2].trim())
     if (!txnetwork.isKnownNetwork(chainId)) {
         console.log("The first argument is not a supported chain id");

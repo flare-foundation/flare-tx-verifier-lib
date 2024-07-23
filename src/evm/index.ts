@@ -115,6 +115,7 @@ async function _getContract(
 
     let contractName: string | undefined = undefined
     let contractMethod: string | undefined = undefined
+    let contractMethodABI: string | undefined = undefined
     let contractData: string | undefined = undefined
     let isFlareNetworkContract: boolean | undefined = undefined
     let parameters: Array<TxVerificationParameter> | undefined = undefined
@@ -131,6 +132,7 @@ async function _getContract(
             let description = contract.interface.parseTransaction(txData)
             if (description) {
                 contractMethod = description.name
+                contractMethodABI = description.fragment.format("json");
                 let inputs = description.fragment.inputs
                 parameters = Array<TxVerificationParameter>()
                 for (let i = 0; i < inputs.length; i++) {
@@ -146,6 +148,7 @@ async function _getContract(
     return {
         contractName,
         contractMethod,
+        contractMethodABI,
         contractData,
         isFlareNetworkContract,
         parameters
