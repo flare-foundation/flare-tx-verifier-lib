@@ -47,6 +47,7 @@
       "fee": "2267236000000000",
       "contractName": "ValidatorRewardManager",
       "contractMethod": "claim",
+      "contractMethodABI": "{\"type\":\"function\",\"name\":\"claim\",\"constant\":false,\"payable\":false,\"inputs\":[{\"type\":\"address\",\"name\":\"_rewardOwner\"},{\"type\":\"address\",\"name\":\"_recipient\"},{\"type\":\"uint256\",\"name\":\"_rewardAmount\"},{\"type\":\"bool\",\"name\":\"_wrap\"}],\"outputs\":[]}",
       "contractData": "0xb2c121920000000000000000000000008ab7028638854ae968ef5174996c17d010af4bd50000000000000000000000008ab7028638854ae968ef5174996c17d010af4bd500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
       "isFlareNetworkContract": true,
       "parameters": [
@@ -86,6 +87,7 @@
       "fee": "40321121152531950",
       "contractName": "FtsoRewardManager",
       "contractMethod": "claim",
+      "contractMethodABI": "{\"type\":\"function\",\"name\":\"claim\",\"constant\":false,\"payable\":false,\"inputs\":[{\"type\":\"address\",\"name\":\"_rewardOwner\"},{\"type\":\"address\",\"name\":\"_recipient\"},{\"type\":\"uint256\",\"name\":\"_rewardEpoch\"},{\"type\":\"bool\",\"name\":\"_wrap\"}],\"outputs\":[{\"type\":\"uint256\",\"name\":\"_rewardAmount\"}]}",
       "contractData": "0xb2c1219200000000000000000000000076f95a6fce19f21845e56e39cd08e6b39bd5644f00000000000000000000000076f95a6fce19f21845e56e39cd08e6b39bd5644f00000000000000000000000000000000000000000000000000000000000000970000000000000000000000000000000000000000000000000000000000000001",
       "isFlareNetworkContract": true,
       "parameters": [
@@ -125,6 +127,7 @@
       "fee": "14186603149500000",
       "contractName": "FtsoRewardManager",
       "contractMethod": "claimReward",
+      "contractMethodABI": "{\"type\":\"function\",\"name\":\"claimReward\",\"constant\":false,\"payable\":false,\"inputs\":[{\"type\":\"address\",\"name\":\"_recipient\"},{\"type\":\"uint256[]\",\"name\":\"_rewardEpochs\"}],\"outputs\":[{\"type\":\"uint256\",\"name\":\"_rewardAmount\"}]}",
       "contractData": "0xb2af870a000000000000000000000000ac865390316b2c278073ef1268358d9fccd217e00000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000960000000000000000000000000000000000000000000000000000000000000097",
       "isFlareNetworkContract": true,
       "parameters": [
@@ -156,6 +159,7 @@
       "fee": "11124749083800000",
       "contractName": "PollingFoundation",
       "contractMethod": "castVote",
+      "contractMethodABI": "{\"type\":\"function\",\"name\":\"castVote\",\"constant\":false,\"payable\":false,\"inputs\":[{\"type\":\"uint256\",\"name\":\"_proposalId\"},{\"type\":\"uint8\",\"name\":\"_support\"}],\"outputs\":[{\"type\":\"uint256\",\"name\":\"\"}]}",
       "contractData": "0x56781388fe8f37ae54ebd6cc0360ad584dce6bedf1f7590cda43efbeaa4c9c8860f645c40000000000000000000000000000000000000000000000000000000000000001",
       "isFlareNetworkContract": true,
       "parameters": [
@@ -187,6 +191,7 @@
       "fee": "99709430631008990",
       "contractName": "PollingFtso",
       "contractMethod": "propose",
+      "contractMethodABI": "{\"type\":\"function\",\"name\":\"propose\",\"constant\":false,\"stateMutability\":\"payable\",\"payable\":true,\"inputs\":[{\"type\":\"string\",\"name\":\"_description\"}],\"outputs\":[{\"type\":\"uint256\",\"name\":\"_proposalId\"}]}",
       "contractData": "0xaa98df39000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000e57b226e616d65223a202241696c616e64466c6172652028436f6c6c7573696f6e29222c202261646472657373223a2022307832633133633631646338363762316537303162656361626632643963366632656564643265353863222c20226465736372697074696f6e223a202253616d6520616c676f726974686d2061732042657374204654534f222c202275726c223a202268747470733a2f2f666f72756d2e666c6172652e6e6574776f726b2f742f70726963696e672d6c696e6b732d6265747765656e2d626573746674736f2d616e642d61696c616e64666c6172652f333832227d000000000000000000000000000000000000000000000000000000",
       "isFlareNetworkContract": true,
       "parameters": [
@@ -214,6 +219,7 @@
       "fee": "93821750000000000",
       "contractName": "PollingFtso",
       "contractMethod": "propose",
+      "contractMethodABI": "{\"type\":\"function\",\"name\":\"propose\",\"constant\":false,\"stateMutability\":\"payable\",\"payable\":true,\"inputs\":[{\"type\":\"string\",\"name\":\"_description\"}],\"outputs\":[{\"type\":\"uint256\",\"name\":\"_proposalId\"}]}",
       "contractData": "0xaa98df39000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000e57b226e616d65223a202241696c616e64466c6172652028436f6c6c7573696f6e29222c202261646472657373223a2022307833613662313138653762333338313430626162306231663534386364373861306437626363616463222c20226465736372697074696f6e223a202253616d6520616c676f726974686d2061732042657374204654534f222c202275726c223a202268747470733a2f2f666f72756d2e666c6172652e6e6574776f726b2f742f70726963696e672d6c696e6b732d6265747765656e2d626573746674736f2d616e642d61696c616e64666c6172652f333832227d000000000000000000000000000000000000000000000000000000",
       "isFlareNetworkContract": true,
       "parameters": [
@@ -241,6 +247,7 @@
       "fee": "699350000000000",
       "contractName": "PollingFoundation",
       "contractMethod": "switchToProductionMode",
+      "contractMethodABI": "{\"type\":\"function\",\"name\":\"switchToProductionMode\",\"constant\":false,\"payable\":false,\"inputs\":[],\"outputs\":[]}",
       "contractData": "0xf5a98383",
       "isFlareNetworkContract": true,
       "parameters": [],
@@ -263,6 +270,7 @@
       "fee": "278682478200000000",
       "contractName": "FtsoRewardManager",
       "contractMethod": "claim",
+      "contractMethodABI": "{\"type\":\"function\",\"name\":\"claim\",\"constant\":false,\"payable\":false,\"inputs\":[{\"type\":\"address\",\"name\":\"_rewardOwner\"},{\"type\":\"address\",\"name\":\"_recipient\"},{\"type\":\"uint256\",\"name\":\"_rewardEpoch\"},{\"type\":\"bool\",\"name\":\"_wrap\"}],\"outputs\":[{\"type\":\"uint256\",\"name\":\"_rewardAmount\"}]}",
       "contractData": "0xb2c12192000000000000000000000000f2e06184c12c7c24d7bbcece01ffdafc31c8381f000000000000000000000000f2e06184c12c7c24d7bbcece01ffdafc31c8381f00000000000000000000000000000000000000000000000000000000000028aa0000000000000000000000000000000000000000000000000000000000000001",
       "isFlareNetworkContract": true,
       "parameters": [
@@ -302,6 +310,7 @@
       "fee": "5578690250000000",
       "contractName": "RPSLS",
       "contractMethod": "submit",
+      "contractMethodABI": "{\"type\":\"function\",\"name\":\"submit\",\"constant\":false,\"stateMutability\":\"payable\",\"payable\":true,\"inputs\":[{\"type\":\"string\",\"name\":\"gameId\"},{\"type\":\"bytes32\",\"name\":\"gameChoice\"}],\"outputs\":[]}",
       "contractData": "0x4dceb35f00000000000000000000000000000000000000000000000000000000000000402902bbf72f153050646eb694980e9e34e78e95d3608d444b921f4d4d8e1b0564000000000000000000000000000000000000000000000000000000000000002438663934353233382d306166302d343661312d616631312d37633534303063643730633800000000000000000000000000000000000000000000000000000000",
       "isFlareNetworkContract": false,
       "parameters": [
@@ -333,6 +342,7 @@
       "fee": "4320798500000000",
       "contractName": "RPSLS",
       "contractMethod": "reveal",
+      "contractMethodABI": "{\"type\":\"function\",\"name\":\"reveal\",\"constant\":false,\"payable\":false,\"inputs\":[{\"type\":\"string\",\"name\":\"gameId\"},{\"type\":\"tuple\",\"name\":\"player1\",\"components\":[{\"type\":\"address\",\"name\":\"\"},{\"type\":\"uint8\",\"name\":\"\"},{\"type\":\"uint256\",\"name\":\"\"}]},{\"type\":\"tuple\",\"name\":\"player2\",\"components\":[{\"type\":\"address\",\"name\":\"\"},{\"type\":\"uint8\",\"name\":\"\"},{\"type\":\"uint256\",\"name\":\"\"}]},{\"type\":\"uint256\",\"name\":\"amount\"}],\"outputs\":[]}",
       "contractData": "0xa4817a520000000000000000000000000000000000000000000000000000000000000100000000000000000000000000e75a3ab4c585011d34fbb450694a573e413efdf500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000077358737000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000042bbb3ad0000000000000000000000000000000000000000000000000de0b6b3a7640000000000000000000000000000000000000000000000000000000000000000002439653862323537362d373231332d343863332d386335622d34646161646163373339373700000000000000000000000000000000000000000000000000000000",
       "isFlareNetworkContract": false,
       "parameters": [
@@ -494,6 +504,7 @@
       ],
       "contractName": "ClaimSetupManager",
       "contractMethod": "enableDelegationAccount",
+      "contractMethodABI": "{\"type\":\"function\",\"name\":\"enableDelegationAccount\",\"constant\":false,\"payable\":false,\"inputs\":[],\"outputs\":[{\"type\":\"address\",\"name\":\"\"}]}",
       "contractData": "0xf0977215",
       "isFlareNetworkContract": true,
       "parameters": [],
@@ -515,6 +526,7 @@
       ],
       "contractName": "ClaimSetupManager",
       "contractMethod": "enableDelegationAccount",
+      "contractMethodABI": "{\"type\":\"function\",\"name\":\"enableDelegationAccount\",\"constant\":false,\"payable\":false,\"inputs\":[],\"outputs\":[{\"type\":\"address\",\"name\":\"\"}]}",
       "contractData": "0xf0977215",
       "isFlareNetworkContract": true,
       "parameters": [],
@@ -536,6 +548,7 @@
       ],
       "contractName": "WNat",
       "contractMethod": "deposit",
+      "contractMethodABI": "{\"type\":\"function\",\"name\":\"deposit\",\"constant\":false,\"stateMutability\":\"payable\",\"payable\":true,\"inputs\":[],\"outputs\":[]}",
       "contractData": "0xd0e30db0",
       "isFlareNetworkContract": true,
       "parameters": [],

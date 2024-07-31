@@ -7,6 +7,7 @@ export interface TxVerification {
     fee?: string,
     contractName?: string,
     contractMethod?: string,
+    contractMethodABI?: string,
     contractData?: string,
     isFlareNetworkContract?: boolean,
     parameters?: Array<TxVerificationParameter>,
