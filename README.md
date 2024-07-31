@@ -35,7 +35,7 @@ The output of the function `verify` applied to the unsigned transaction will inc
 | fee         				    | Transfer fee stated (if specified in transaction) stated in WEI.  |              
 | contractName      		  | When calling a C-chain contract, its name will be returned (if it exists).  |               	
 | contractMethod   			  | When calling a C-chain contract, the method called will be returned (if it can be decoded). |
-| contractMethodABI   			  | When calling a C-chain contract, the method called ABI specification in JSON string format will be returned. |                  
+| contractMethodABI   			  | When calling a C-chain contract, the ABI specification of the method called will be returned in JSON string format. |                  
 | contractData      		  | When calling a C-chain contract, the data field is returned (in hex format). |
 | isFlareNetworkContract 	| When calling a C-chain contract, it returns true/false, depending if the contract was deployed by Flare. |
 | parameters				      | When calling a C-chain contract, the method's parameters are returned. For types "addDelegatorP" and "addValidatorP", additional staking parameters are returned. |
