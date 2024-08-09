@@ -82,10 +82,10 @@ function _getMessageToSign(tx: UnsignedCTx | UnsignedPTx): string {
 }
 
 function _getNetwork(networkId: number, warnings: Set<string>): string {
-    if (!txnetwork.isKnownAvaxNetwork(networkId)) {
+    if (!txnetwork.isKnownPChainNetwork(networkId)) {
         warnings.add(warning.UNKOWN_NETWORK)
     }
-    return txnetwork.getAvaxNetworkDescription(networkId)
+    return txnetwork.getPChainNetworkDescription(networkId)
 }
 
 async function _tryGetCTxParams(tx: UnsignedCTx): Promise<TxVerification | null> {

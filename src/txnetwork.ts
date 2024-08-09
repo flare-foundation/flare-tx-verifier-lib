@@ -1,63 +1,63 @@
-export const AVAX_FLARE = 14
-export const AVAX_SONGBIRD = 5
-export const AVAX_COSTON2 = 114
-export const AVAX_COSTON = 7
+export const FLARE_C_CHAIN = 14
+export const SONGBIRD_C_CHAIN = 19
+export const COSTON2_C_CHAIN = 114
+export const COSTON_C_CHAIN = 16
 
-export const EVM_FLARE = 14
-export const EVM_SONGBIRD = 19
-export const EVM_COSTON2 = 114
-export const EVM_COSTON = 16
+export const FLARE_P_CHAIN = 14
+export const SONGBIRD_P_CHAIN = 5
+export const COSTON2_P_CHAIN = 114
+export const COSTON_P_CHAIN = 7
 
-export function getAvaxNetworks(): Array<number> {
+export function getCChainNetworks(): Array<number> {
     return [
-        AVAX_FLARE,
-        AVAX_SONGBIRD,
-        AVAX_COSTON2,
-        AVAX_COSTON
+        FLARE_C_CHAIN,
+        SONGBIRD_C_CHAIN,
+        COSTON2_C_CHAIN,
+        COSTON_C_CHAIN
     ]
 }
 
-export function getEvmNetworks(): Array<number> {
+export function getPChainNetworks(): Array<number> {
     return [
-        EVM_FLARE,
-        EVM_SONGBIRD,
-        EVM_COSTON2,
-        EVM_COSTON
+        FLARE_P_CHAIN,
+        SONGBIRD_P_CHAIN,
+        COSTON2_P_CHAIN,
+        COSTON_P_CHAIN
     ]
 }
 
-export function isKnownAvaxNetwork(network: number): boolean {
-    return getAvaxNetworks().includes(network)
+export function isKnownCChainNetwork(network: number): boolean {
+    return getCChainNetworks().includes(network)
 }
 
-export function isKnownEvmNetwork(network: number): boolean {
-    return getEvmNetworks().includes(network)
+export function isKnownPChainNetwork(network: number): boolean {
+    return getPChainNetworks().includes(network)
 }
 
-export function getAvaxNetworkDescription(network: number): string {
+export function getCChainNetworkDescription(network: number): string {
     switch (network) {
-        case AVAX_FLARE:
+        case FLARE_C_CHAIN:
             return "Flare Mainnet"
-        case AVAX_SONGBIRD:
+        case SONGBIRD_C_CHAIN:
             return "Songbird Canary-Network"
-        case AVAX_COSTON2:
+        case COSTON2_C_CHAIN:
             return "Flare Testnet Coston2"
-        case AVAX_COSTON:
+        case COSTON_C_CHAIN:
             return "Flare Testnet Coston"
         default:
             return network.toString()
     }
 }
 
-export function getEvmNetworkDescription(network: number): string {
+export function getPChainNetworkDescription(network: number): string {
     switch (network) {
-        case EVM_FLARE:
+        case FLARE_P_CHAIN:
             return "Flare Mainnet"
-        case EVM_SONGBIRD:
+        case SONGBIRD_P_CHAIN:
             return "Songbird Canary-Network"
-        case EVM_COSTON2:
+        case COSTON2_P_CHAIN:
             return "Flare Testnet Coston2"
-        case EVM_COSTON:
+        case COSTON_P_CHAIN:
             return "Flare Testnet Coston"
         default:
             return network.toString()
