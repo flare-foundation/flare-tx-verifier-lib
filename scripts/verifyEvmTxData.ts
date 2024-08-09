@@ -5,7 +5,7 @@ import * as utils from "../src/utils"
 
 async function main() {
     let chainId = parseInt(process.argv[2].trim())
-    if (!txnetwork.isKnownNetwork(chainId)) {
+    if (!txnetwork.isKnownEvmNetwork(chainId)) {
         console.log("The first argument is not a supported chain id");
         return
     }

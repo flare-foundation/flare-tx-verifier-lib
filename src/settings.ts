@@ -3,6 +3,8 @@ type NetworkId = {
 }
 
 export const RPC: NetworkId = {
+    5: "https://songbird-api.flare.network/ext/bc/C/rpc",
+    7: "https://coston-api.flare.network/ext/bc/C/rpc",
     14: "https://flare-api.flare.network/ext/bc/C/rpc",
     16: "https://coston-api.flare.network/ext/bc/C/rpc",
     19: "https://songbird-api.flare.network/ext/bc/C/rpc",
