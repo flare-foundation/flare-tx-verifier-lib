@@ -9,7 +9,7 @@ async function main() {
     let lines = new Array<string>()
     lines.push(`import { NetworkRegistry } from "./interface"\n`)
     lines.push("export const registry: NetworkRegistry = {")
-    for (let network of txnetwork.getNetworks()) {
+    for (let network of txnetwork.getCChainNetworks()) {
         lines.push(`   ${network}: {`)
         let contracts = await explorer.getContracts(network)
         let flareContracts = await chain.getFlareNetworkContracts(network)

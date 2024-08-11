@@ -11,7 +11,7 @@ async function main() {
 	}
 	let txId = utils.toHex(input, true)
 	let txHex: string | null = null
-	for (let networkId of txnetwork.getNetworks()) {
+	for (let networkId of txnetwork.getCChainNetworks()) {
 		try { txHex = await chain.getRawTransaction(networkId, txId) } catch { }
 		if (txHex) {
 			break
