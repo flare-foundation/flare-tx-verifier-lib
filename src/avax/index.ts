@@ -497,10 +497,10 @@ async function _checkNodeId(tx: AddDelegatorTx, warnings: Set<string>) {
 }
 
 function _getAvalanche(networkId: number): Avalanche {
-    if (!(networkId in settings.RPC)) {
+    if (!(networkId in settings.P_CHAIN_API)) {
         return null
     }
-    let url = new URL(settings.RPC[networkId])
+    let url = new URL(settings.P_CHAIN_API[networkId])
     let avalanche = new Avalanche(
         url.hostname,
         url.port ? parseInt(url.port) : undefined,

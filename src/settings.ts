@@ -2,13 +2,18 @@ type NetworkId = {
     [key: number]: string
 }
 
-export const RPC: NetworkId = {
-    5: "https://songbird-api.flare.network/ext/bc/C/rpc",
-    7: "https://coston-api.flare.network/ext/bc/C/rpc",
+export const C_CHAIN_API_RPC: NetworkId = {
     14: "https://flare-api.flare.network/ext/bc/C/rpc",
     16: "https://coston-api.flare.network/ext/bc/C/rpc",
     19: "https://songbird-api.flare.network/ext/bc/C/rpc",
     114: "https://coston2-api.flare.network/ext/bc/C/rpc"
+}
+
+export const P_CHAIN_API: NetworkId = {
+    5: "https://songbird-api.flare.network/ext/bc/P",
+    7: "https://coston-api.flare.network/ext/bc/P",
+    14: "https://flare-api.flare.network/ext/bc/P",
+    114: "https://coston2-api.flare.network/ext/bc/P"
 }
 
 export const FLARE_CONTRACT_REGISTRY: NetworkId = {

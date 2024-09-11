@@ -54,5 +54,5 @@ export async function getRawTransaction(
 }
 
 function _getProvider(network: number): JsonRpcProvider {
-    return new JsonRpcProvider(settings.RPC[network])
+    return new JsonRpcProvider(settings.C_CHAIN_API_RPC[network])
 }
