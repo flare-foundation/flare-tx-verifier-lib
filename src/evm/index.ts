@@ -41,10 +41,10 @@ export async function verify(txHex: string): Promise<TxVerification | null> {
 
 function _getNetwork(tx: Transaction, warnings: Set<string>): string {
     let chainId = Number(tx.chainId)
-    if (!txnetwork.isKnownNetwork(chainId)) {
+    if (!txnetwork.isKnownCChainNetwork(chainId)) {
         warnings.add(warning.UNKOWN_NETWORK)
     }
-    return txnetwork.getDescription(chainId)
+    return txnetwork.getCChainNetworkDescription(chainId)
 }
 
 function _getRecipient(tx: Transaction): string {
@@ -56,7 +56,7 @@ async function _isRecipientFlrNetContract(tx: Transaction): Promise<boolean> {
         return false
     }
     let chainId = Number(tx.chainId)
-    if (!txnetwork.isKnownNetwork(chainId)) {
+    if (!txnetwork.isKnownCChainNetwork(chainId)) {
         return false
     }
     return await isFlareContract(chainId, tx.to!)
@@ -70,7 +70,7 @@ async function _getType(tx: Transaction, isRecipientFlrNetContract: boolean): Pr
         return txtype.CONTRACT_CALL_C // contract creation
     }
     let chainId = Number(tx.chainId)
-    if (txnetwork.isKnownNetwork(chainId)) {
+    if (txnetwork.isKnownCChainNetwork(chainId)) {
         if (await isContract(chainId, tx.to)) {
             return txtype.CONTRACT_CALL_C
         } else {
@@ -124,7 +124,7 @@ async function _getContract(
 
     contractData = tx.data
     isFlareNetworkContract = isRecipientFlrNetContract
-    if (tx.to != null && txnetwork.isKnownNetwork(chainId)) {
+    if (tx.to != null && txnetwork.isKnownCChainNetwork(chainId)) {
         let contract = await getContractData(chainId, tx.to!)
         if (contract) {
             contractName = contract.name

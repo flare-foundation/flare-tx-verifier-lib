@@ -27,7 +27,7 @@ import BinTools from "@flarenetwork/flarejs/dist/utils/bintools"
 import { bech32 } from "bech32"
 import { sha256 } from "ethers"
 import { TxVerification, TxVerificationParameter } from "../interface"
-import { Defaults } from "@flarenetwork/flarejs/dist/utils"
+import { Defaults, NetworkIDToHRP } from "@flarenetwork/flarejs/dist/utils"
 
 const bintools = BinTools.getInstance()
 
@@ -82,10 +82,10 @@ function _getMessageToSign(tx: UnsignedCTx | UnsignedPTx): string {
 }
 
 function _getNetwork(networkId: number, warnings: Set<string>): string {
-    if (!txnetwork.isKnownNetwork(networkId)) {
+    if (!txnetwork.isKnownPChainNetwork(networkId)) {
         warnings.add(warning.UNKOWN_NETWORK)
     }
-    return txnetwork.getDescription(networkId)
+    return txnetwork.getPChainNetworkDescription(networkId)
 }
 
 async function _tryGetCTxParams(tx: UnsignedCTx): Promise<TxVerification | null> {
@@ -448,6 +448,10 @@ async function _getPUTXOs(
     blockchainId?: string
 ): Promise<Array<any>> {
     let avalanche = _getAvalanche(networkId)
+    if (avalanche == null) {
+        return new Array<any>()
+    }
+
     let utxos = (await avalanche.PChain().getUTXOs(`P-${address}`, blockchainId)).utxos
     return utxos.getAllUTXOs().map(u => {
         return {
@@ -459,6 +463,10 @@ async function _getPUTXOs(
 
 async function _checkNodeId(tx: AddDelegatorTx, warnings: Set<string>) {
     let avalanche = _getAvalanche(tx.getNetworkID())
+    if (avalanche == null) {
+        warnings.add(warning.UNKNOWN_NODEID)
+        return
+    }
 
     let stakes = new Array<any>
     let cvalidators = await avalanche.PChain().getCurrentValidators() as any
@@ -489,7 +497,10 @@ async function _checkNodeId(tx: AddDelegatorTx, warnings: Set<string>) {
 }
 
 function _getAvalanche(networkId: number): Avalanche {
-    let url = new URL(settings.RPC[networkId])
+    if (!(networkId in settings.P_CHAIN_API)) {
+        return null
+    }
+    let url = new URL(settings.P_CHAIN_API[networkId])
     let avalanche = new Avalanche(
         url.hostname,
         url.port ? parseInt(url.port) : undefined,
@@ -526,34 +537,36 @@ function _checkCBlockchainId(networkId: number, blockchainId: string, warnings: 
     if (utils.isZeroHex(blockchainId)) {
         return
     }
-    let cBlockchainId = bintools.cb58Decode(_getCBlockchainId(networkId)).toString("hex")
-    if (blockchainId !== cBlockchainId) {
+    let cBlockchainId = _getCBlockchainId(networkId)
+    if (!cBlockchainId || blockchainId !== bintools.cb58Decode(cBlockchainId).toString("hex")) {
         warnings.add(warning.INVALID_BLOCKCHAIN)
     }
 }
 
 function _getCBlockchainId(networkId: number): string {
-    return Defaults.network[networkId].C.blockchainID
+    return networkId in Defaults.network ? Defaults.network[networkId].C.blockchainID : ""
 }
 
 function _checkPBlockchainId(networkId: number, blockchainId: string, warnings: Set<string>) {
     if (utils.isZeroHex(blockchainId)) {
         return
     }
-    let pBlockchainId = bintools.cb58Decode(_getPBlockchainId(networkId)).toString("hex")
-    if (blockchainId !== pBlockchainId) {
+    let pBlockchainId = _getPBlockchainId(networkId)
+    if (!pBlockchainId || blockchainId !== bintools.cb58Decode(pBlockchainId).toString("hex")) {
         warnings.add(warning.INVALID_BLOCKCHAIN)
     }
 }
 
 function _getPBlockchainId(networkId: number): string {
-    return Defaults.network[networkId].P.blockchainID
+    return networkId in Defaults.network ? Defaults.network[networkId].P.blockchainID : ""
 }
 
 function _checkPAssetId(networkId: number, assetId: string, warnings: Set<string>) {
-    let pAssetId = bintools.cb58Decode(Defaults.network[networkId].P.avaxAssetID!).toString("hex")
-    if (assetId !== pAssetId) {
-        warnings.add(warning.INVALID_ASSET)
+    if (networkId in Defaults.network) {
+        let pAssetId = bintools.cb58Decode(Defaults.network[networkId].P.avaxAssetID!).toString("hex")
+        if (assetId !== pAssetId) {
+            warnings.add(warning.INVALID_ASSET)
+        }
     }
 }
 
@@ -578,7 +591,8 @@ function _sumValues(values: Array<BN>): BN {
 }
 
 function _addressToBech(networkId: number, addressHex: string): string {
-    return bech32.encode(txnetwork.getHRP(networkId), bech32.toWords(Buffer.from(addressHex, "hex")))
+    let hrp = networkId in NetworkIDToHRP ? NetworkIDToHRP[networkId] : ""
+    return bech32.encode(hrp, bech32.toWords(Buffer.from(addressHex, "hex")))
 }
 
 function _gweiToWei(gweiValue: BN): BN {
