@@ -14,7 +14,8 @@
   },
   "scripts": {
     "build": "rm -rf dist/ && npx tsc -b && cp -r ./build/src ./dist && rm -rf build",
-    "test": "npx ts-node ./test/index"
+    "test": "npx ts-node ./test/index",
+    "verify": "npx ts-node ./scripts/verify"
   },
   "author": "Flare Network",
   "license": "MIT",
