@@ -1,6 +1,7 @@
 import * as chain from "./chain"
 import * as explorer from "./explorer"
 import { ContractData, AbiContractData } from "./interface";
+import * as proxy from "./proxy"
 import { registry } from "./registry"
 import { Interface } from "ethers";
 
@@ -27,6 +28,21 @@ export async function isContract(
     address: string
 ): Promise<boolean> {
     return chain.isContract(network, address.toLowerCase())
+}
+
+export async function getContractCode(
+    network: number,
+    address: string
+): Promise<string> {
+    return chain.getContractCode(network, address.toLowerCase())
+}
+
+export async function getProxyTarget(
+    network: number,
+    address: string,
+    data: string
+): Promise<string | null> {
+    return proxy.target(network, address, data)
 }
 
 function _getDataFromRegistry(

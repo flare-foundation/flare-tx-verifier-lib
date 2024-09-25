@@ -34,9 +34,16 @@ export async function isContract(
     network: number,
     address: string
 ): Promise<boolean> {
-    let provider = _getProvider(network)
-    let code = await provider.getCode(address)
+    let code = await getContractCode(network, address)
     return !utils.isZeroHex(code)
+}
+
+export async function getContractCode(
+    network: number,
+    address: string
+): Promise<string> {
+    let provider = _getProvider(network)
+    return await provider.getCode(address)
 }
 
 export async function getRawTransaction(
