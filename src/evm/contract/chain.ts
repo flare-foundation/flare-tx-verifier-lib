@@ -27,7 +27,7 @@ export async function isFlareNetworkContract(
     address: string
 ): Promise<boolean> {
     let contracts = await getFlareNetworkContracts(network)
-    return contracts.filter(c => c.address === address).length > 0
+    return contracts.find(c => c.address === address) !== undefined
 }
 
 export async function isContract(
