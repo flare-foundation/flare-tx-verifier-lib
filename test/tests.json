@@ -669,7 +669,7 @@
       "contractMethod": "redemptionPaymentDefault",
       "contractMethodABI": "{\"type\":\"function\",\"name\":\"redemptionPaymentDefault\",\"constant\":false,\"payable\":false,\"inputs\":[{\"type\":\"tuple\",\"name\":\"_proof\",\"components\":[{\"type\":\"bytes32[]\",\"name\":\"merkleProof\"},{\"type\":\"tuple\",\"name\":\"data\",\"components\":[{\"type\":\"bytes32\",\"name\":\"attestationType\"},{\"type\":\"bytes32\",\"name\":\"sourceId\"},{\"type\":\"uint64\",\"name\":\"votingRound\"},{\"type\":\"uint64\",\"name\":\"lowestUsedTimestamp\"},{\"type\":\"tuple\",\"name\":\"requestBody\",\"components\":[{\"type\":\"uint64\",\"name\":\"minimalBlockNumber\"},{\"type\":\"uint64\",\"name\":\"deadlineBlockNumber\"},{\"type\":\"uint64\",\"name\":\"deadlineTimestamp\"},{\"type\":\"bytes32\",\"name\":\"destinationAddressHash\"},{\"type\":\"uint256\",\"name\":\"amount\"},{\"type\":\"bytes32\",\"name\":\"standardPaymentReference\"}]},{\"type\":\"tuple\",\"name\":\"responseBody\",\"components\":[{\"type\":\"uint64\",\"name\":\"minimalBlockTimestamp\"},{\"type\":\"uint64\",\"name\":\"firstOverflowBlockNumber\"},{\"type\":\"uint64\",\"name\":\"firstOverflowBlockTimestamp\"}]}]}]},{\"type\":\"uint256\",\"name\":\"_redemptionRequestId\"}],\"outputs\":[]}",
       "contractData": "0xe95a0bfd0000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000017de2c00000000000000000000000000000000000000000000000000000000000001c05265666572656e6365645061796d656e744e6f6e6578697374656e6365000000746573744254430000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000f76d70000000000000000000000000000000000000000000000000000000066f40d1f00000000000000000000000000000000000000000000000000000000002dd78200000000000000000000000000000000000000000000000000000000002dd78c0000000000000000000000000000000000000000000000000000000066f437d3e91ebbefa2335426d0ce6cc62b0c86ec2c6b5546bfb65e753637121621d1cfd80000000000000000000000000000000000000000000000000000000000009c18464250526641000200000000000000000000000000000000000000000017de2c00000000000000000000000000000000000000000000000000000000002dd78200000000000000000000000000000000000000000000000000000000002dd85e0000000000000000000000000000000000000000000000000000000066f4388a00000000000000000000000000000000000000000000000000000000000000049a39813573303b9d5ee2bab26f8c01f74de50721929a6180fed7ad9874a3a587e9554c2e915b21cb56d63236a1794118bfede9d2ad211b20315fa5fed2eeba24875686eb01a82f142380a6ace855cafaf801c3a02852f3ed359b2c8e5d67c524979c2fb062c2aaa619140a2e9f787ae54dc0afdba1f109bbd52b67cdbda81892",
-      "isFlareNetworkContract": false,
+      "isFlareNetworkContract": true,
       "parameters": [
         {
           "name": "_proof",
@@ -680,9 +680,7 @@
           "value": "1564204"
         }
       ],
-      "warnings": [
-        "The recipient address is a proxy contract. Transaction parameters are decoded based on its speculated implementation."
-      ],
+      "warnings": [],
       "messageToSign": "0xe45c369e61b1052b9c191a9cd8ebc3fe020bbcd30397b3842a33a8b02fbb5436"
     }
   },
@@ -703,7 +701,7 @@
       "contractMethod": "approve",
       "contractMethodABI": "{\"type\":\"function\",\"name\":\"approve\",\"constant\":false,\"payable\":false,\"inputs\":[{\"type\":\"address\",\"name\":\"spender\"},{\"type\":\"uint256\",\"name\":\"amount\"}],\"outputs\":[{\"type\":\"bool\",\"name\":\"\"}]}",
       "contractData": "0x095ea7b3000000000000000000000000b8b9141fc735a4fde49ce32dfcef3cf37968bd8e0000000000000000000000000000000000000000000000000000000000000001",
-      "isFlareNetworkContract": false,
+      "isFlareNetworkContract": true,
       "parameters": [
         {
           "name": "spender",
@@ -714,9 +712,7 @@
           "value": "1"
         }
       ],
-      "warnings": [
-        "The recipient address is a proxy contract. Transaction parameters are decoded based on its speculated implementation."
-      ],
+      "warnings": [],
       "messageToSign": "0x42ae33ef16eb392b6ef5d1006398b524771614d495a0476d46527107f40aff66"
     }
   }
