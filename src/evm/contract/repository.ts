@@ -2,7 +2,7 @@ import * as txnetwork from "../../txnetwork"
 
 const FLARE_SMART_CONTRACTS_V1_URL = "https://gitlab.com/flarenetwork/flare-smart-contracts/-/raw/#NETWORK_network_deployed_code/deployment/deploys/#NETWORK.json"
 const FLARE_SMART_CONTRACTS_V2_URL = "https://raw.githubusercontent.com/flare-foundation/flare-smart-contracts-v2/refs/heads/main/deployment/deploys/all/#NETWORK.json"
-const FLARE_FASSET_CONTRACTS_URL = "https://raw.githubusercontent.com/flare-labs-ltd/fassets/refs/heads/open_beta/deployment/deploys/#NETWORK.json"
+const FLARE_FASSET_CONTRACTS_URL = "https://raw.githubusercontent.com/flare-labs-ltd/fassets/refs/heads/main/deployment/deploys/history/#NETWORK.json"
 
 export async function getAddressesOfFlareSmartContractsV1(network: number): Promise<Array<string>> {
     return _getAddresses(network, FLARE_SMART_CONTRACTS_V1_URL)
