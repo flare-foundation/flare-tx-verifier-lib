@@ -3,7 +3,7 @@ import * as txtype from "../txtype"
 import * as utils from "../utils"
 import * as warning from "../warning"
 import { Transaction } from "ethers";
-import { getContractData, isContract, isFlareContract } from "./contract";
+import { getContractData, getProxyTarget, isContract, isFlareContract } from "./contract";
 import { TxVerification, TxVerificationParameter } from "../interface";
 
 export async function verify(txHex: string): Promise<TxVerification | null> {
@@ -20,7 +20,7 @@ export async function verify(txHex: string): Promise<TxVerification | null> {
         let description = txtype.getDescription(type)
         let value = _getValue(tx)
         let fee = _getMaxFee(tx)
-        let contract = await _getContract(tx, type, isRecipientFlrNetContract)
+        let contract = await _getContract(tx, type, isRecipientFlrNetContract, warnings)
         let messageToSign = tx.unsignedHash
 
         return {
@@ -107,7 +107,8 @@ function _getMaxFee(tx: Transaction): string | undefined {
 async function _getContract(
     tx: Transaction,
     type: string,
-    isRecipientFlrNetContract: boolean
+    isRecipientFlrNetContract: boolean,
+    warnings: Set<string>
 ): Promise<any> {
     if (type !== txtype.CONTRACT_CALL_C) {
         return {}
@@ -126,10 +127,32 @@ async function _getContract(
     isFlareNetworkContract = isRecipientFlrNetContract
     if (tx.to != null && txnetwork.isKnownCChainNetwork(chainId)) {
         let contract = await getContractData(chainId, tx.to!)
+
+        let decodingWithProxyTarget = false
+        if (contract == null) {
+            let proxyTargetAddress = await getProxyTarget(chainId, tx.to!, tx.data)
+            if (proxyTargetAddress) {
+                contract = await getContractData(chainId, proxyTargetAddress)
+                decodingWithProxyTarget = true
+            }
+        }
+
         if (contract) {
             contractName = contract.name
             let txData = { data: tx.data, value: tx.value }
             let description = contract.interface.parseTransaction(txData)
+
+            if (description == null && !decodingWithProxyTarget) {
+                let proxyTargetAddress = await getProxyTarget(chainId, tx.to!, tx.data)
+                if (proxyTargetAddress) {
+                    let proxyTarget = await getContractData(chainId, proxyTargetAddress)
+                    if (proxyTarget != null) {
+                        description = proxyTarget.interface.parseTransaction(txData)
+                        decodingWithProxyTarget = true
+                    }
+                }
+            }
+
             if (description) {
                 contractMethod = description.name
                 contractMethodABI = description.fragment.format("json");
@@ -140,6 +163,9 @@ async function _getContract(
                         name: inputs[i].name,
                         value: description.args[i].toString()
                     })
+                }
+                if (decodingWithProxyTarget && !isFlareNetworkContract) {
+                    warnings.add(warning.PROXY_CONTRACT)
                 }
             }
         }

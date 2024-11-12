@@ -1,8 +1,11 @@
 import * as chain from "./chain"
 import * as explorer from "./explorer"
 import { ContractData, AbiContractData } from "./interface";
+import * as proxy from "./proxy"
+import * as repository from "./repository"
 import { registry } from "./registry"
 import { Interface } from "ethers";
+import * as utils from "../../utils"
 
 export async function getContractData(
     network: number,
@@ -19,7 +22,16 @@ export async function isFlareContract(
     network: number,
     address: string
 ): Promise<boolean> {
-    return chain.isFlareNetworkContract(network, address.toLowerCase())
+    if (_containsAddress(await repository.getAddressesOfFlareSmartContractsV2(network), address)) {
+        return true
+    }
+    if (_containsAddress(await repository.getAddressesOfFlareFassetContracts(network), address)) {
+        return true
+    }
+    if (_containsAddress(await repository.getAddressesOfFlareSmartContractsV1(network), address)) {
+        return true
+    }
+    return false
 }
 
 export async function isContract(
@@ -27,6 +39,21 @@ export async function isContract(
     address: string
 ): Promise<boolean> {
     return chain.isContract(network, address.toLowerCase())
+}
+
+export async function getContractCode(
+    network: number,
+    address: string
+): Promise<string> {
+    return chain.getContractCode(network, address.toLowerCase())
+}
+
+export async function getProxyTarget(
+    network: number,
+    address: string,
+    data: string
+): Promise<string | null> {
+    return proxy.target(network, address, data)
 }
 
 function _getDataFromRegistry(
@@ -54,4 +81,9 @@ function _toContractData(
             interface: Interface.from(data.abi)
         }
     }
+}
+
+function _containsAddress(addresses: Array<string>, address: string) {
+    let ca = utils.toHex(address, false)
+    return addresses.find(a => utils.toHex(a, false) === ca) !== undefined
 }
