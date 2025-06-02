@@ -34,6 +34,17 @@ export async function isFlareContract(
     return false
 }
 
+export async function getFlareContracts(
+    network: number
+): Promise<Array<string>> {
+    let contracts = []
+    contracts = contracts.concat(await repository.getAddressesOfFlareSmartContractsV1(network))
+    contracts = contracts.concat(await repository.getAddressesOfFlareSmartContractsV2(network))
+    contracts = contracts.concat(await repository.getAddressesOfFlareFassetContracts(network))
+    contracts = [...new Set<string>(contracts)]
+    return contracts
+}
+
 export async function isContract(
     network: number,
     address: string

@@ -4,6 +4,9 @@ import * as utils from "../../utils"
 import { Contract, JsonRpcProvider, Transaction } from "ethers";
 import { BaseContractData } from "./interface";
 
+/**
+ * @deprecated
+ */
 export async function getFlareNetworkContracts(
     network: number
 ): Promise<Array<BaseContractData>> {
@@ -22,6 +25,9 @@ export async function getFlareNetworkContracts(
     return result
 }
 
+/**
+ * @deprecated
+ */
 export async function isFlareNetworkContract(
     network: number,
     address: string

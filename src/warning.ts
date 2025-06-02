@@ -7,4 +7,6 @@ export const UNSPENT_AMOUNT_NOT_TO_RECIPIENT = "Unspent amount is not transferre
 export const INVALID_BLOCKCHAIN = "Transaction specifies an invalid blockchain."
 export const INVALID_ASSET = "Transaction specifies an invalid asset."
 export const UNKNOWN_NODEID = "Transaction specifies an unknown node id."
+export const UNKOWN_SUBNET = "Transaction specifies an unkown subnet network."
 export const PROXY_CONTRACT = "The recipient address is a proxy contract. Transaction parameters are decoded based on its speculated implementation."
+export const DEPRECATED_TX = "The transaction type is deprecated and may not be accepted by the network."

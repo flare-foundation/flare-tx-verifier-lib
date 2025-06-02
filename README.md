@@ -48,4 +48,4 @@ When staking, the returned staking parameters are the following:
 | nodeId | Identifier of the validator node that you want to stake to. |
 | startTime | Proposed starting time of the stake (in unix time). |
 | endTime | Proposed ending time of the stake (in unix time). |
-| validatorFee | Proposed node fee in % multiplied by 10000 (if you want to initialize staking on a validator node). |
+| delegationFee | Proposed node fee in % multiplied by 10000 (if you want to initialize staking on a validator node). |

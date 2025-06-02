@@ -3,43 +3,33 @@ import * as txtype from "../txtype"
 import * as settings from "../settings"
 import * as utils from "../utils"
 import * as warning from "../warning"
-import Avalanche, { BN } from "@flarenetwork/flarejs"
 import {
-    AmountInput as CAmountInput,
-    AmountOutput as CAmountOutput,
-    EVMOutput,
-    ExportTx as ExportCTx,
-    ImportTx as ImportCTx,
-    UnsignedTx as UnsignedCTx
-} from "@flarenetwork/flarejs/dist/apis/evm"
-import {
-    AddDelegatorTx,
-    AddValidatorTx,
-    AmountInput as PAmountInput,
-    AmountOutput as PAmountOutput,
-    ExportTx as ExportPTx,
-    ImportTx as ImportPTx,
-    TransferableInput as PTransferableInput,
-    TransferableOutput as PTransferableOutput,
-    UnsignedTx as UnsignedPTx
-} from "@flarenetwork/flarejs/dist/apis/platformvm"
-import BinTools from "@flarenetwork/flarejs/dist/utils/bintools"
-import { bech32 } from "bech32"
-import { sha256 } from "ethers"
+    Context,
+    evmSerial,
+    pvmSerial,
+    utils as futils,
+    TypeSymbols,
+    TransferOutput,
+    Int,
+    messageHash,
+    Address,
+    TransferableOutput,
+    TransferableInput,
+    pvm,
+    networkIDs
+} from "@flarenetwork/flarejs"
 import { TxVerification, TxVerificationParameter } from "../interface"
-import { Defaults, NetworkIDToHRP } from "@flarenetwork/flarejs/dist/utils"
-
-const bintools = BinTools.getInstance()
+import { ethers } from "ethers"
 
 export async function verify(txHex: string): Promise<TxVerification | null> {
     txHex = utils.toHex(txHex, false)
 
-    let ctx = _tryRecoverCTx(txHex) as UnsignedCTx
+    let ctx = _tryRecoverCTx(txHex) as evmSerial.EVMTx
     if (ctx != null) {
         return await _tryGetCTxParams(ctx)
     }
 
-    let ptx = _tryRecoverPTx(txHex) as UnsignedPTx
+    let ptx = _tryRecoverPTx(txHex) as pvmSerial.BaseTx
     if (ptx != null) {
         return await _tryGetPTxParams(ptx)
     }
@@ -47,35 +37,25 @@ export async function verify(txHex: string): Promise<TxVerification | null> {
     return null
 }
 
-function _tryRecoverCTx(txHex: string): UnsignedCTx | null {
+function _tryRecoverCTx(txHex: string): evmSerial.EVMTx | null {
     try {
-        let tx = new UnsignedCTx()
-        tx.fromBuffer(Buffer.from(txHex, "hex") as any)
-        return tx
+        return futils.unpackWithManager("EVM", Buffer.from(txHex, "hex")) as evmSerial.EVMTx
     } catch {
         return null
     }
 }
 
-function _tryRecoverPTx(txHex: string): UnsignedPTx | null {
+function _tryRecoverPTx(txHex: string): pvmSerial.BaseTx | null {
     try {
-        let tx = new UnsignedPTx()
-        tx.fromBuffer(Buffer.from(txHex, "hex") as any)
-        return tx
+        return futils.unpackWithManager("PVM", Buffer.from(txHex, "hex")) as pvmSerial.BaseTx
     } catch {
         return null
     }
 }
 
-function _getMessageToSign(tx: UnsignedCTx | UnsignedPTx): string {
+function _getMessageToSign(tx: evmSerial.EVMTx | pvmSerial.BaseTx): string {
     try {
-        let signatureRequests = tx.prepareUnsignedHashes(undefined as any)
-        if (signatureRequests.length > 0) {
-            return utils.toHex(signatureRequests[0].message, true)
-        } else {
-            let txBuffer = Buffer.from(tx.toBuffer().toString("hex"), "hex")
-            return utils.toHex(sha256(txBuffer), true)
-        }
+        return utils.toHex(Buffer.from(messageHash(futils.packTx(tx))).toString("hex"), true)
     } catch {
         throw new Error("Failed to recover message to sign")
     }
@@ -88,24 +68,24 @@ function _getNetwork(networkId: number, warnings: Set<string>): string {
     return txnetwork.getPChainNetworkDescription(networkId)
 }
 
-async function _tryGetCTxParams(tx: UnsignedCTx): Promise<TxVerification | null> {
+async function _tryGetCTxParams(tx: evmSerial.EVMTx): Promise<TxVerification | null> {
     try {
-        let btx = tx.getTransaction()
-
         let warnings = new Set<string>()
 
-        _checkCBlockchainId(btx.getNetworkID(), btx.getBlockchainID().toString("hex"), warnings)
+        let networkId = _getNetworkIdFromEVMTx(tx)
+        let context = await _getContext(networkId)
 
-        let network = _getNetwork(btx.getNetworkID(), warnings)
-        let txType = btx.getTypeName()
+        _checkCBlockchainId(context, tx.getBlockchainId(), warnings)
+
+        let network = _getNetwork(networkId, warnings)
         let type: string
         let params: any
-        if (txType === "ExportTx") {
+        if (tx._type === TypeSymbols.EvmExportTx) {
             type = txtype.EXPORT_C
-            params = _getExportCTxParams(btx as ExportCTx, warnings)
-        } else if (txType === "ImportTx") {
+            params = _getExportCTxParams(tx as evmSerial.ExportTx, context, warnings)
+        } else if (tx._type === TypeSymbols.EvmImportTx) {
             type = txtype.IMPORT_C
-            params = _getImportCTxParams(btx as ImportCTx, warnings)
+            params = _getImportCTxParams(tx as evmSerial.ImportTx, context, warnings)
         } else {
             throw new Error("Unkown C-chain transaction type")
         }
@@ -125,43 +105,49 @@ async function _tryGetCTxParams(tx: UnsignedCTx): Promise<TxVerification | null>
     }
 }
 
-function _getExportCTxParams(tx: ExportCTx, warnings: Set<string>): any {
-    let networkId = tx.getNetworkID()
+function _getNetworkIdFromEVMTx(tx: evmSerial.EVMTx): number {
+    let networkIdInt = (tx as any).networkId
+    if (!networkIdInt) {
+        throw new Error("Failed to obtain network id from EVM transaction")
+    }
+    return (networkIdInt as Int).value()
+}
 
-    _checkPBlockchainId(networkId, tx.getDestinationChain().toString("hex"), warnings)
+function _getExportCTxParams(tx: evmSerial.ExportTx, context: Context.Context, warnings: Set<string>): any {
+    _checkPBlockchainId(context, tx.destinationChain.toString(), warnings)
 
-    let inputs = tx.getInputs()
-    let inputAmount = new BN(0)
+    let inputs = tx.ins
+    let inputAmount = BigInt(0)
     for (let i = 0; i < inputs.length; i++) {
-        inputAmount = inputAmount.add(_getAmountFromEVMOutput(inputs[i]))
-        _checkPAssetId(networkId, inputs[i].getAssetID().toString("hex"), warnings)
+        inputAmount += inputs[i].amount.value()
+        _checkPAssetId(context, inputs[i].assetId.toString(), warnings)
     }
 
-    let outputs = tx.getExportedOutputs()
-    let exportAmounts = new Array<BN>()
+    let outputs = tx.exportedOutputs
+    let exportAmounts = new Array<bigint>()
     let exportRecipients = new Array<string>()
     for (let i = 0; i < outputs.length; i++) {
-        let output = outputs[i].getOutput() as CAmountOutput
-        let addresses = output.getAddresses()
+        let output = outputs[i].output as TransferOutput
+        let addresses = output.outputOwners.addrs
         if (addresses.length > 1) {
             warnings.add(warning.MULTIPLE_SIGNERS)
         }
-        let address = _addressesToString(addresses as any, true, networkId)
+        let address = _addressesToString(addresses, context.hrp)
         let index = exportRecipients.indexOf(address)
         if (index < 0) {
             exportRecipients.push(address)
-            exportAmounts.push(output.getAmount())
+            exportAmounts.push(output.amount())
         } else {
-            exportAmounts[index] = exportAmounts[index].add(output.getAmount())
+            exportAmounts[index] += output.amount()
         }
-        _checkOutputLockTime(output.getLocktime(), warnings)
-        _checkPAssetId(networkId, outputs[i].getAssetID().toString("hex"), warnings)
+        _checkOutputLockTime(output.outputOwners.locktime.value(), warnings)
+        _checkPAssetId(context, outputs[i].getAssetId(), warnings)
     }
     if (exportRecipients.length > 1) {
         warnings.add(warning.MULTIPLE_RECIPIENTS)
     }
 
-    let fee = inputAmount.sub(_sumValues(exportAmounts))
+    let fee = inputAmount - _sumValues(exportAmounts)
 
     return {
         recipients: exportRecipients,
@@ -170,36 +156,34 @@ function _getExportCTxParams(tx: ExportCTx, warnings: Set<string>): any {
     }
 }
 
-function _getImportCTxParams(tx: ImportCTx, warnings: Set<string>): any {
-    let networkId = tx.getNetworkID()
+function _getImportCTxParams(tx: evmSerial.ImportTx, context: Context.Context, warnings: Set<string>): any {
+    _checkPBlockchainId(context, tx.sourceChain.toString(), warnings)
 
-    _checkPBlockchainId(networkId, tx.getSourceChain().toString("hex"), warnings)
-
-    let inputs = tx.getImportInputs()
-    let inputAmount = new BN(0)
+    let inputs = tx.importedInputs
+    let inputAmount = BigInt(0)
     for (let i = 0; i < inputs.length; i++) {
-        inputAmount = inputAmount.add((inputs[i].getInput() as CAmountInput).getAmount())
-        _checkPAssetId(networkId, inputs[i].getAssetID().toString("hex"), warnings)
+        inputAmount += inputs[i].input.amount()
+        _checkPAssetId(context, inputs[i].assetId.toString(), warnings)
     }
 
-    let outputs = tx.getOuts()
-    let importAmounts = new Array<BN>()
+    let outputs = tx.Outs
+    let importAmounts = new Array<bigint>()
     let importRecipients = new Array<string>()
     for (let i = 0; i < outputs.length; i++) {
         let output = outputs[i]
-        let amount = _getAmountFromEVMOutput(output)
-        let address = utils.toHex(output.getAddressString().toLowerCase(), true)
+        let amount = output.amount.value()
+        let address = ethers.getAddress(output.address.toHex())
         let index = importRecipients.indexOf(address)
         if (index < 0) {
             importRecipients.push(address)
             importAmounts.push(amount)
         } else {
-            importAmounts[index] = importAmounts[index].add(amount)
+            importAmounts[index] += amount
         }
-        _checkPAssetId(networkId, output.getAssetID().toString("hex"), warnings)
+        _checkPAssetId(context, output.assetId.toString(), warnings)
     }
 
-    let fee = inputAmount.sub(_sumValues(importAmounts))
+    let fee = inputAmount - _sumValues(importAmounts)
 
     return {
         recipients: importRecipients,
@@ -208,35 +192,38 @@ function _getImportCTxParams(tx: ImportCTx, warnings: Set<string>): any {
     }
 }
 
-function _getAmountFromEVMOutput(output: EVMOutput): BN {
-    let outputBuffer = output.toBuffer()
-    return new BN(bintools.copyFrom(outputBuffer, 20, 28))
-}
-
-async function _tryGetPTxParams(tx: UnsignedPTx): Promise<TxVerification | null> {
+async function _tryGetPTxParams(tx: pvmSerial.BaseTx): Promise<TxVerification | null> {
     try {
-        let btx = tx.getTransaction()
+        let btx = tx.baseTx
 
         let warnings = new Set<string>()
 
-        _checkPBlockchainId(btx.getNetworkID(), btx.getBlockchainID().toString("hex"), warnings)
+        let networkId = btx.NetworkId.value()
+        let context = await _getContext(networkId)
 
-        let network = _getNetwork(btx.getNetworkID(), warnings)
-        let txType = btx.getTypeName()
+        _checkPBlockchainId(context, tx.getBlockchainId(), warnings)
+
+        let network = _getNetwork(networkId, warnings)
         let type: string
         let params: any
-        if (txType === "AddDelegatorTx") {
+        if (tx._type === TypeSymbols.AddPermissionlessDelegatorTx) {
             type = txtype.ADD_DELEGATOR_P
-            params = await _getAddDelegatorParams(btx as AddDelegatorTx, warnings)
-        } else if (txType === "AddValidatorTx") {
+            params = await _getAddDelegatorParams(tx as pvmSerial.AddPermissionlessDelegatorTx, context, warnings)
+        } else if (tx._type === TypeSymbols.AddPermissionlessValidatorTx) {
             type = txtype.ADD_VALIDATOR_P
-            params = await _getAddValidatorParams(btx as AddValidatorTx, warnings)
-        } else if (txType === "ExportTx") {
+            params = await _getAddValidatorParams(tx as pvmSerial.AddPermissionlessValidatorTx, context, warnings)
+        } else if (tx._type === TypeSymbols.AddDelegatorTx) {
+            type = txtype.ADD_DELEGATOR_P
+            params = await _getAddDelegatorParams(tx as pvmSerial.AddDelegatorTx, context, warnings)
+        } else if (tx._type === TypeSymbols.AddValidatorTx) {
+            type = txtype.ADD_VALIDATOR_P
+            params = await _getAddValidatorParams(tx as pvmSerial.AddValidatorTx, context, warnings)
+        } else if (tx._type === TypeSymbols.PvmExportTx) {
             type = txtype.EXPORT_P
-            params = await _getExportPTx(btx as ExportPTx, warnings)
-        } else if (txType === "ImportTx") {
+            params = await _getExportPTx(tx as pvmSerial.ExportTx, context, warnings)
+        } else if (tx._type === TypeSymbols.PvmImportTx) {
             type = txtype.IMPORT_P
-            params = await _getImportPTx(btx as ImportPTx, warnings)
+            params = await _getImportPTx(tx as pvmSerial.ImportTx, context, warnings)
         } else {
             throw new Error("Unkown P-chain transaction type")
         }
@@ -255,60 +242,90 @@ async function _tryGetPTxParams(tx: UnsignedPTx): Promise<TxVerification | null>
     }
 }
 
-async function _getAddDelegatorParams(tx: AddDelegatorTx, warnings: Set<string>): Promise<any> {
-    return _getStakeTxData(tx, warnings)
+async function _getAddDelegatorParams(
+    tx: pvmSerial.AddPermissionlessDelegatorTx | pvmSerial.AddDelegatorTx,
+    context: Context.Context,
+    warnings: Set<string>
+): Promise<any> {
+    return _getStakeTxData(tx, context, warnings)
 }
 
-async function _getAddValidatorParams(tx: AddValidatorTx, warnings: Set<string>): Promise<any> {
-    return _getStakeTxData(tx, warnings)
+async function _getAddValidatorParams(
+    tx: pvmSerial.AddPermissionlessValidatorTx | pvmSerial.AddValidatorTx,
+    context: Context.Context,
+    warnings: Set<string>
+): Promise<any> {
+    return _getStakeTxData(tx, context, warnings)
 }
 
-async function _getStakeTxData(tx: AddDelegatorTx | AddValidatorTx, warnings: Set<string>): Promise<any> {
+async function _getStakeTxData(
+    tx: pvmSerial.AddPermissionlessDelegatorTx | pvmSerial.AddPermissionlessValidatorTx | pvmSerial.AddDelegatorTx | pvmSerial.AddValidatorTx,
+    context: Context.Context,
+    warnings: Set<string>
+): Promise<any> {
+    if (tx instanceof pvmSerial.AddDelegatorTx || tx instanceof pvmSerial.AddValidatorTx) {
+        warnings.add(warning.DEPRECATED_TX)
+    }
+
     let [recipients, receivedAmounts] = _getPOutputsData(
-        tx.getNetworkID(),
-        tx.getOuts(),
+        context,
+        tx.baseTx.outputs,
         warnings
     )
-
+    
     let sentAmount = await _getPInputsData(
-        tx.getNetworkID(),
-        tx.getIns(),
+        context,
+        tx.baseTx.inputs,
         recipients.length == 1 && !recipients[0].includes(",") ? recipients[0] : undefined,
         undefined,
         warnings
     )
 
-    let stakeAmount = tx.getStakeAmount()
-    let fee = sentAmount.sub(_sumValues(receivedAmounts)).sub(stakeAmount)
+    let stakeAmount = tx.stake.reduce((p, c) => { return p += c.amount() }, BigInt(0))
+    let fee = sentAmount - _sumValues(receivedAmounts) - stakeAmount
 
     let [stakeoutRecipients, stakeoutAmounts] = _getPOutputsData(
-        tx.getNetworkID(),
-        tx.getStakeOuts(),
+        context,
+        tx.stake,
         warnings
     )
     _compareRecipients(stakeoutRecipients, recipients, warnings)
 
-    if (tx instanceof AddDelegatorTx) {
-        await _checkNodeId(tx, warnings)
+    if (tx instanceof pvmSerial.AddPermissionlessDelegatorTx || tx instanceof pvmSerial.AddDelegatorTx) {
+        await _checkNodeId(tx, context, warnings)
+    }
+
+    let validator: pvmSerial.Validator
+    if (tx instanceof pvmSerial.AddPermissionlessDelegatorTx || tx instanceof pvmSerial.AddPermissionlessValidatorTx) {
+        _checkSubnetId(tx, warnings)
+        validator = tx.subnetValidator.validator
+    } else {
+        validator = tx.validator
     }
 
     let parameters = new Array<TxVerificationParameter>()
     parameters.push({
         name: "nodeId",
-        value: tx.getNodeIDString()
+        value: validator.nodeId.toString()
     })
     parameters.push({
         name: "startTime",
-        value: tx.getStartTime().toString()!
+        value: validator.startTime.value().toString()
     })
     parameters.push({
         name: "endTime",
-        value: tx.getEndTime().toString()!
+        value: validator.endTime.value().toString()
     })
-    if (tx instanceof AddValidatorTx) {
+    if (tx instanceof pvmSerial.AddPermissionlessValidatorTx) {
         parameters.push({
             name: "delegationFee",
-            value: tx.getDelegationFee().toString()
+            value: (tx.shares.value() * 1e4).toString()
+        })
+    }
+    if (tx instanceof pvmSerial.AddValidatorTx) {
+        parameters.push({
+            name: "delegationFee",
+            value: tx.shares.value().toString()
         })
     }
 
@@ -320,30 +337,33 @@ async function _getStakeTxData(tx: AddDelegatorTx | AddValidatorTx, warnings: Se
     }
 }
 
-async function _getExportPTx(tx: ExportPTx, warnings: Set<string>): Promise<any> {
-    let networkId = tx.getNetworkID()
-    _checkCBlockchainId(networkId, tx.getDestinationChain().toString("hex"), warnings)
+async function _getExportPTx(
+    tx: pvmSerial.ExportTx,
+    context: Context.Context,
+    warnings: Set<string>
+): Promise<any> {
+    _checkCBlockchainId(context, tx.destination.toString(), warnings)
     let [utxoRecipients, utxoReceivedAmounts] = _getPOutputsData(
-        networkId,
-        tx.getOuts(),
+        context,
+        tx.baseTx.outputs,
         warnings
     )
     let [exportRecipients, exportAmounts] = _getPOutputsData(
-        networkId,
-        tx.getExportOutputs(),
+        context,
+        tx.outs,
         warnings
     )
     _compareRecipients(exportRecipients, utxoRecipients, warnings)
 
     let utxoSentAmount = await _getPInputsData(
-        networkId,
-        tx.getIns(),
+        context,
+        tx.baseTx.inputs,
         exportRecipients.length == 1 && !exportRecipients.includes(",") ? exportRecipients[0] : undefined,
         undefined,
         warnings
     )
 
-    let fee = utxoSentAmount.sub(_sumValues(utxoReceivedAmounts)).sub(_sumValues(exportAmounts))
+    let fee = utxoSentAmount - _sumValues(utxoReceivedAmounts) - _sumValues(exportAmounts)
 
     return {
         recipients: exportRecipients,
@@ -352,34 +372,36 @@ async function _getExportPTx(tx: ExportPTx, warnings: Set<string>): Promise<any>
     }
 }
 
-async function _getImportPTx(tx: ImportPTx, warnings: Set<string>): Promise<any> {
-    let networkId = tx.getNetworkID()
-
-    _checkCBlockchainId(networkId, tx.getSourceChain().toString("hex"), warnings)
+async function _getImportPTx(
+    tx: pvmSerial.ImportTx,
+    context: Context.Context,
+    warnings: Set<string>
+): Promise<any> {
+    _checkCBlockchainId(context, tx.sourceChain.toString(), warnings)
 
     let [recipients, receivedAmounts] = _getPOutputsData(
-        tx.getNetworkID(),
-        tx.getOuts(),
+        context,
+        tx.baseTx.outputs,
         warnings
     )
 
     let sentAmount = await _getPInputsData(
-        networkId,
-        tx.getIns(),
+        context,
+        tx.baseTx.inputs,
         recipients.length == 1 && !recipients[0].includes(",") ? recipients[0] : undefined,
-        _getCBlockchainId(networkId),
+        context.cBlockchainID.toString(),
         warnings
     )
 
     let importAmount = await _getPInputsData(
-        networkId,
-        tx.getImportInputs(),
+        context,
+        tx.ins,
         recipients.length == 1 && !recipients[0].includes(",") ? recipients[0] : undefined,
-        _getCBlockchainId(networkId),
+        context.cBlockchainID.toString(),
         warnings
     )
 
-    let fee = importAmount.add(sentAmount).sub(_sumValues(receivedAmounts))
+    let fee = importAmount + sentAmount - _sumValues(receivedAmounts)
 
     return {
         recipients,
@@ -389,21 +411,21 @@ async function _getImportPTx(tx: ImportPTx, warnings: Set<string>): Promise<any>
 }
 
 async function _getPInputsData(
-    networkId: number,
-    inputs: Array<PTransferableInput>,
+    context: Context.Context,
+    inputs: Array<TransferableInput>,
     address: string | undefined,
     blockchainId: string | undefined,
     warnings: Set<string>
-): Promise<BN> {
-    let utxos = address ? (await _getPUTXOs(networkId, address, blockchainId)) : new Array<any>()
-    let sentAmount = new BN(0)
+): Promise<bigint> {
+    let utxos = address ? (await _getPUTXOs(context, address, blockchainId)) : new Array<any>()
+    let sentAmount = BigInt(0)
     for (let input of inputs) {
-        let ai = input.getInput() as PAmountInput
-        sentAmount = sentAmount.add(ai.getAmount())
-        _checkPAssetId(networkId, input.getAssetID().toString("hex"), warnings)
+        let ai = input.input
+        sentAmount += ai.amount()
+        _checkPAssetId(context, input.assetId.toString(), warnings)
         if (address) {
-            let txId = input.getTxID().toString("hex")
-            let outputIdx = parseInt(input.getOutputIdx().toString("hex"), 16)
+            let txId = input.utxoID.txID.toString()
+            let outputIdx = input.utxoID.outputIdx.value()
             if (!utxos.find(u => u.txId === txId && u.outputIdx === outputIdx)) {
                 warnings.add(warning.FUNDS_NOT_RETURNED)
             }
@@ -413,28 +435,28 @@ async function _getPInputsData(
 }
 
 function _getPOutputsData(
-    networkId: number,
-    outputs: Array<PTransferableOutput>,
+    context: Context.Context,
+    outputs: Array<TransferableOutput>,
     warnings: Set<string>
-): [Array<string>, Array<BN>] {
+): [Array<string>, Array<bigint>] {
     let recipients = new Array<string>()
-    let receivedAmounts = new Array<BN>()
+    let receivedAmounts = new Array<bigint>()
     for (let output of outputs) {
-        let ao = output.getOutput() as PAmountOutput
-        let addresses = ao.getAddresses()
+        let ao = output.output as TransferOutput
+        let addresses = ao.outputOwners.addrs
         if (addresses.length != 1) {
             warnings.add(warning.MULTIPLE_SIGNERS)
         }
-        let address = _addressesToString(addresses as any, true, networkId)
+        let address = _addressesToString(addresses, context.hrp)
         let index = recipients.indexOf(address)
         if (index < 0) {
             recipients.push(address)
-            receivedAmounts.push(ao.getAmount())
+            receivedAmounts.push(ao.amount())
         } else {
-            receivedAmounts[index] = receivedAmounts[index].add(ao.getAmount())
+            receivedAmounts[index] += ao.amount()
         }
         _checkOutputLockTime(ao.getLocktime(), warnings)
-        _checkPAssetId(networkId, output.getAssetID().toString("hex"), warnings)
+        _checkPAssetId(context, output.assetId.toString(), warnings)
     }
     if (recipients.length > 1) {
         warnings.add(warning.MULTIPLE_RECIPIENTS)
@@ -443,130 +465,118 @@ function _getPOutputsData(
 }
 
 async function _getPUTXOs(
-    networkId: number,
+    context: Context.Context,
     address: string,
     blockchainId?: string
 ): Promise<Array<any>> {
-    let avalanche = _getAvalanche(networkId)
-    if (avalanche == null) {
+    let pvmApi = _getPVMApi(context.networkID)
+    if (pvmApi == null) {
         return new Array<any>()
     }
 
-    let utxos = (await avalanche.PChain().getUTXOs(`P-${address}`, blockchainId)).utxos
-    return utxos.getAllUTXOs().map(u => {
+    let response = await pvmApi.getUTXOs({ addresses: [`P-${address}`], sourceChain: blockchainId })
+    return response.utxos.map(u => {
         return {
-            txId: u.getTxID().toString("hex"),
-            outputIdx: parseInt(u.getOutputIdx().toString("hex"), 16)
+            txId: u.utxoId.txID.toString(),
+            outputIdx: u.utxoId.outputIdx.value()
         }
     })
 }
 
-async function _checkNodeId(tx: AddDelegatorTx, warnings: Set<string>) {
-    let avalanche = _getAvalanche(tx.getNetworkID())
-    if (avalanche == null) {
+async function _checkNodeId(
+    tx: pvmSerial.AddPermissionlessDelegatorTx | pvmSerial.AddDelegatorTx,
+    context: Context.Context,
+    warnings: Set<string>
+): Promise<void> {
+    let pvmApi = _getPVMApi(context.networkID)
+    if (pvmApi == null) {
         warnings.add(warning.UNKNOWN_NODEID)
         return
     }
 
-    let stakes = new Array<any>
-    let cvalidators = await avalanche.PChain().getCurrentValidators() as any
-    if (cvalidators && cvalidators.validators) {
-        let cstakes = cvalidators.validators as Array<any>
-        if (cstakes) {
-            stakes = stakes.concat(cstakes)
-        }
-    }
-    let pvalidators = await avalanche.PChain().getPendingValidators() as any
-    if (pvalidators && pvalidators.validators) {
-        let pstakes = pvalidators.validators as Array<any>
-        if (pstakes) {
-            stakes = stakes.concat(pstakes)
-        }
+    let txNodeId: string
+    if (tx instanceof pvmSerial.AddPermissionlessDelegatorTx) {
+        txNodeId = tx.subnetValidator.validator.nodeId.toString()
+    } else {
+        txNodeId = tx.validator.nodeId.toString()
     }
 
-    let nodeIds = new Set<string>()
-    for (let stake of stakes) {
-        if (stake.nodeID) {
-            nodeIds.add(stake.nodeID)
+    let cresponse = await pvmApi.getCurrentValidators()
+    for (let validator of cresponse.validators) {
+        if (validator.nodeID === txNodeId) {
+            return
         }
     }
-    if (!nodeIds.has(tx.getNodeIDString())) {
-        warnings.add(warning.UNKNOWN_NODEID)
+    let presponse = await pvmApi.getPendingValidators()
+    for (let validator of presponse.validators) {
+        if (validator.nodeID === txNodeId) {
+            return
+        }
     }
-
+    warnings.add(warning.UNKNOWN_NODEID)
 }
 
-function _getAvalanche(networkId: number): Avalanche {
+function _checkSubnetId(
+    tx: pvmSerial.AddPermissionlessDelegatorTx | pvmSerial.AddPermissionlessValidatorTx,
+    warnings: Set<string>
+): void {
+    if (tx.subnetValidator.subnetId.toString() !== networkIDs.PrimaryNetworkID.toString()) {
+        warnings.add(warning.UNKOWN_SUBNET)
+    }
+}
+
+function _getPVMApi(networkId: number): pvm.PVMApi {
     if (!(networkId in settings.P_CHAIN_API)) {
         return null
     }
-    let url = new URL(settings.P_CHAIN_API[networkId])
-    let avalanche = new Avalanche(
-        url.hostname,
-        url.port ? parseInt(url.port) : undefined,
-        url.protocol,
-        networkId
-    )
-    return avalanche
+    let uri = new URL(settings.P_CHAIN_API[networkId]).origin
+    return new pvm.PVMApi(uri)
+}
+
+async function _getContext(networkId: number): Promise<Context.Context> {
+    if (!(networkId in settings.P_CHAIN_API)) {
+        return null
+    }
+    let uri = new URL(settings.P_CHAIN_API[networkId]).origin
+    let context = await Context.getContextFromURI(uri)
+    if (context.networkID !== networkId) {
+        throw new Error(`The API network ${context.networkID} does not match the expected network ${networkId}`)
+    }
+    return context
 }
 
 function _addressesToString(
-    addresses: Array<Buffer>,
-    toBech: boolean,
-    networkId?: number
+    addresses: Array<Address>,
+    hrp: string
 ): string {
     let items = new Array(addresses.length)
     for (let i = 0; i < addresses.length; i++) {
-        let address = addresses[i].toString("hex")
-        if (toBech) {
-            items[i] = _addressToBech(networkId!, address)
-        } else {
-            items[i] = utils.toHex(address, true)
-        }
+        items[i] = addresses[i].toString(hrp)
     }
     return items.sort().join(", ")
 }
 
-function _checkOutputLockTime(outputLockTime: BN, warnings: Set<string>) {
-    if (!outputLockTime.isZero()) {
+function _checkOutputLockTime(outputLockTime: bigint, warnings: Set<string>) {
+    if (outputLockTime !== BigInt(0)) {
         warnings.add(warning.FUNDS_LOCKED)
     }
 }
 
-function _checkCBlockchainId(networkId: number, blockchainId: string, warnings: Set<string>) {
-    if (utils.isZeroHex(blockchainId)) {
-        return
-    }
-    let cBlockchainId = _getCBlockchainId(networkId)
-    if (!cBlockchainId || blockchainId !== bintools.cb58Decode(cBlockchainId).toString("hex")) {
+function _checkCBlockchainId(context: Context.Context, blockchainId: string, warnings: Set<string>) {
+    if (blockchainId !== context.cBlockchainID) {
         warnings.add(warning.INVALID_BLOCKCHAIN)
     }
 }
 
-function _getCBlockchainId(networkId: number): string {
-    return networkId in Defaults.network ? Defaults.network[networkId].C.blockchainID : ""
-}
-
-function _checkPBlockchainId(networkId: number, blockchainId: string, warnings: Set<string>) {
-    if (utils.isZeroHex(blockchainId)) {
-        return
-    }
-    let pBlockchainId = _getPBlockchainId(networkId)
-    if (!pBlockchainId || blockchainId !== bintools.cb58Decode(pBlockchainId).toString("hex")) {
+function _checkPBlockchainId(context: Context.Context, blockchainId: string, warnings: Set<string>) {
+    if (blockchainId !== context.pBlockchainID) {
         warnings.add(warning.INVALID_BLOCKCHAIN)
     }
 }
 
-function _getPBlockchainId(networkId: number): string {
-    return networkId in Defaults.network ? Defaults.network[networkId].P.blockchainID : ""
-}
-
-function _checkPAssetId(networkId: number, assetId: string, warnings: Set<string>) {
-    if (networkId in Defaults.network) {
-        let pAssetId = bintools.cb58Decode(Defaults.network[networkId].P.avaxAssetID!).toString("hex")
-        if (assetId !== pAssetId) {
-            warnings.add(warning.INVALID_ASSET)
-        }
+function _checkPAssetId(context: Context.Context, assetId: string, warnings: Set<string>) {
+    if (assetId !== context.avaxAssetID) {
+        warnings.add(warning.INVALID_ASSET)
     }
 }
 
@@ -586,15 +596,10 @@ function _compareRecipients(
     }
 }
 
-function _sumValues(values: Array<BN>): BN {
-    return values.reduce((p, c) => p.add(c), new BN(0))
+function _sumValues(values: Array<bigint>): bigint {
+    return values.reduce((p, c) => p + c, BigInt(0))
 }
 
-function _addressToBech(networkId: number, addressHex: string): string {
-    let hrp = networkId in NetworkIDToHRP ? NetworkIDToHRP[networkId] : ""
-    return bech32.encode(hrp, bech32.toWords(Buffer.from(addressHex, "hex")))
-}
-
-function _gweiToWei(gweiValue: BN): BN {
-    return gweiValue.mul(new BN(1e9))
+function _gweiToWei(gweiValue: bigint): bigint {
+    return gweiValue * BigInt(1e9)
 }

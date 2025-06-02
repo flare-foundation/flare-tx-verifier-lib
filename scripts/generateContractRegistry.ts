@@ -1,4 +1,5 @@
 import * as chain from "../src/evm/contract/chain"
+import * as contract from "../src/evm/contract"
 import * as explorer from "../src/evm/contract/explorer"
 import * as txnetwork from "../src/txnetwork"
 import * as fs from "fs"
@@ -12,14 +13,14 @@ async function main() {
     for (let network of txnetwork.getCChainNetworks()) {
         lines.push(`   ${network}: {`)
         let contracts = await explorer.getContracts(network)
-        let flareContracts = await chain.getFlareNetworkContracts(network)
+        let flareContracts = await contract.getFlareContracts(network)
         for (let flareContract of flareContracts) {
-            let address = flareContract.address.toLowerCase()
+            let address = flareContract.toLowerCase()
             let contract = contracts.filter(c => c.address === address)
             if (contract.length == 1) {
                 lines.push(`        "${address}": {`)
                 lines.push(`            address: "${address}",`)
-                lines.push(`            name: "${flareContract.name}",`)
+                lines.push(`            name: "${contract[0].name}",`)
                 lines.push(`            abi: ${contract[0].abi}`)
                 lines.push(`        },`)
             }

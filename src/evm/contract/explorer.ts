@@ -25,7 +25,7 @@ export async function getContracts(
     network: number
 ): Promise<Array<AbiContractData>> {
     let contracts = new Array<AbiContractData>()
-    let data = await _get(network, "?module=contract&action=listcontracts&page=0&offset=1000&filter=1") as Array<any>
+    let data = await _get(network, "?module=contract&action=listcontracts&page=0&offset=10000&filter=1") as Array<any>
     for (let item of data) {
         let contract = _parseContract(item)
         if (contract != null) {
