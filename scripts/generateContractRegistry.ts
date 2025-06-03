@@ -1,4 +1,3 @@
-import * as chain from "../src/evm/contract/chain"
 import * as contract from "../src/evm/contract"
 import * as explorer from "../src/evm/contract/explorer"
 import * as txnetwork from "../src/txnetwork"

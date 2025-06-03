@@ -316,13 +316,7 @@ async function _getStakeTxData(
         name: "endTime",
         value: validator.endTime.value().toString()
     })
-    if (tx instanceof pvmSerial.AddPermissionlessValidatorTx) {
-        parameters.push({
-            name: "delegationFee",
-            value: (tx.shares.value() * 1e4).toString()
-        })
-    }
-    if (tx instanceof pvmSerial.AddValidatorTx) {
+    if (tx instanceof pvmSerial.AddPermissionlessValidatorTx || tx instanceof pvmSerial.AddValidatorTx) {
         parameters.push({
             name: "delegationFee",
             value: tx.shares.value().toString()

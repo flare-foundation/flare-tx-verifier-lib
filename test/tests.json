@@ -582,7 +582,7 @@
         },
         {
           "name": "delegationFee",
-          "value": "200000"
+          "value": "20"
         }
       ],
       "warnings": [],
