@@ -515,7 +515,7 @@ function _checkSubnetId(
     warnings: Set<string>
 ): void {
     if (tx.subnetValidator.subnetId.toString() !== networkIDs.PrimaryNetworkID.toString()) {
-        warnings.add(warning.UNKOWN_SUBNET)
+        warnings.add(warning.UNKNOWN_SUBNET)
     }
 }
 
