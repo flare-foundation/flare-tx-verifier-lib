@@ -21,5 +21,6 @@ include:
   - component: gitlab.com/flarenetwork/ci-components-private/test-pnpm@2
     inputs:
       node_version: "24.19"
+      tags: ["flarenetwork-md"]
       test_commands: |
         pnpm test

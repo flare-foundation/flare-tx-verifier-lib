@@ -1,3 +1,7 @@
+<div align="center">
+  <a href="https://flare.network/" target="blank"> <img src="https://content.flare.network/Flare-2.svg" width="300" alt="Flare Logo" /> </a>
+</div>
+
 # Flare: Transaction verification library
 
 The repository contains a typescript library for verification of transactions on Flare and Songbird networks, as well as on Coston and Coston2 test networks, prior to their signing.
