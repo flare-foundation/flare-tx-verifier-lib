@@ -1,33 +1,35 @@
-import { verify } from "../src"
-import * as txnetwork from "../src/txnetwork"
-import * as utils from "../src/utils"
-import * as chain from "../src/evm/contract/chain"
+import { verify } from "../src";
+import * as txnetwork from "../src/txnetwork";
+import * as utils from "../src/utils";
+import * as chain from "../src/evm/contract/chain";
 
 async function main() {
-	let input = process.argv[2].trim()
-	if (!utils.isHex(input)) {
-		console.log("Not a valid input")
-		return
-	}
-	let txId = utils.toHex(input, true)
-	let txHex: string | null = null
-	for (let networkId of txnetwork.getCChainNetworks()) {
-		try { txHex = await chain.getRawTransaction(networkId, txId) } catch { }
-		if (txHex) {
-			break
-		}
-	}
-	if (txHex) {
-		console.log(`\x1b[34mTransaction hash:\x1b[0m ${txHex}`)
-		let verification = await verify(txHex)
-		if (verification == null) {
-            console.log("Transaction verification did not succeed")
-        } else {
-            console.log(`\x1b[34mTransaction verification:\x1b[0m ${JSON.stringify(verification, undefined, "  ")}`)
-        }
-	} else {
-		console.log("Failed to obtain transaction hash")
-	}
+  const input = process.argv[2].trim();
+  if (!utils.isHex(input)) {
+    console.log("Not a valid input");
+    return;
+  }
+  const txId = utils.toHex(input, true);
+  let txHex: string | null = null;
+  for (const networkId of txnetwork.getCChainNetworks()) {
+    try {
+      txHex = await chain.getRawTransaction(networkId, txId);
+    } catch {}
+    if (txHex) {
+      break;
+    }
+  }
+  if (txHex) {
+    console.log(`\x1b[34mTransaction hash:\x1b[0m ${txHex}`);
+    const verification = await verify(txHex);
+    if (verification == null) {
+      console.log("Transaction verification did not succeed");
+    } else {
+      console.log(`\x1b[34mTransaction verification:\x1b[0m ${JSON.stringify(verification, undefined, "  ")}`);
+    }
+  } else {
+    console.log("Failed to obtain transaction hash");
+  }
 }
 
-main()
+main();

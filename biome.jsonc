@@ -1,10 +1,9 @@
 {
   "$schema": "https://biomejs.dev/schemas/2.5.10/schema.json",
   "files": {
-    // registry.ts is generated data (multi-MB) and exceeds biome's file size limit.
-    "includes": ["src/**/*.ts", "scripts/**/*.ts", "!src/evm/contract/registry.ts"]
+    // registry.ts is generated data.
+    "includes": ["src/**/*.ts", "scripts/**/*.ts", "test/**/*.ts", "!src/evm/contract/registry.ts"]
   },
-  // Mirrors @flarenetwork/prettier-config-flare (the org's shared prettier preset).
   "formatter": {
     "enabled": true,
     "indentStyle": "space",
