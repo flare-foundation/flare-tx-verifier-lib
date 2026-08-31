@@ -11,7 +11,7 @@ This library mitigates the main challenges encountered during transaction signin
 
 To install the library, run:
 ```
-npm install @flarenetwork/flare-tx-verifier-lib
+pnpm install @flarenetwork/flare-tx-verifier-lib
 ```
 To verify a transaction (`input`), use asynchronous function `verify` that resolves to a [`TxVerification`](src/interface.ts) object or `null`:
 ```
