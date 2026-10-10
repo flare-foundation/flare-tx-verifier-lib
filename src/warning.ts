@@ -1,11 +1,12 @@
-export const UNKOWN_NETWORK = "Transaction to unknown network. The data may be inaccurate or incomplete."
-export const FUNDS_LOCKED = "Funds will be locked after transfer."
-export const MULTIPLE_RECIPIENTS = "Multiple recipient addresses."
-export const MULTIPLE_SIGNERS = "One or more transaction outputs specify multiple signers."
-export const FUNDS_NOT_RETURNED = "Funds might not be transferred to the signer address."
-export const UNSPENT_AMOUNT_NOT_TO_RECIPIENT = "Unspent amount is not transferred to the recipient."
-export const INVALID_BLOCKCHAIN = "Transaction specifies an invalid blockchain."
-export const INVALID_ASSET = "Transaction specifies an invalid asset."
-export const UNKNOWN_SUBNET = "Transaction specifies an unknown subnet network."
-export const PROXY_CONTRACT = "The recipient address is a proxy contract. Transaction parameters are decoded based on its speculated implementation."
-export const DEPRECATED_TX = "The transaction type is deprecated and may not be accepted by the network."
+export const UNKOWN_NETWORK = "Transaction to unknown network. The data may be inaccurate or incomplete.";
+export const FUNDS_LOCKED = "Funds will be locked after transfer.";
+export const MULTIPLE_RECIPIENTS = "Multiple recipient addresses.";
+export const MULTIPLE_SIGNERS = "One or more transaction outputs specify multiple signers.";
+export const FUNDS_NOT_RETURNED = "Funds might not be transferred to the signer address.";
+export const UNSPENT_AMOUNT_NOT_TO_RECIPIENT = "Unspent amount is not transferred to the recipient.";
+export const INVALID_BLOCKCHAIN = "Transaction specifies an invalid blockchain.";
+export const INVALID_ASSET = "Transaction specifies an invalid asset.";
+export const UNKNOWN_SUBNET = "Transaction specifies an unknown subnet network.";
+export const PROXY_CONTRACT =
+  "The recipient address is a proxy contract. Transaction parameters are decoded based on its speculated implementation.";
+export const DEPRECATED_TX = "The transaction type is deprecated and may not be accepted by the network.";
