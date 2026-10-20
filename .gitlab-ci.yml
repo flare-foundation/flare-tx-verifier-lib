@@ -12,6 +12,7 @@ include:
   - component: gitlab.com/flarenetwork/ci-components-private/lgtm@2
   - component: gitlab.com/flarenetwork/ci-components-private/dependency-track@2
   - template: Jobs/Secret-Detection.latest.gitlab-ci.yml
+  - component: gitlab.com/flarenetwork/ci-components-private/lint-github-actions@2
   - component: gitlab.com/flarenetwork/ci-components-private/lint-pnpm@2
     inputs:
       node_version: "24.19"
