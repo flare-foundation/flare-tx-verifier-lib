@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
     "outDir": "build",
-    "baseUrl": ".",
     "module": "commonjs",
     "target": "ES2015",
     "lib": ["dom", "es2016"],
@@ -12,6 +11,7 @@
     "inlineSources": true,
     "declarationMap": true,
     "noFallthroughCasesInSwitch": true,
+    "strict": false,
     "strictFunctionTypes": true,
     "esModuleInterop": true,
     "typeRoots": ["dist/**", "./node_modules/@types"]
