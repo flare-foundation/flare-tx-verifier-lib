@@ -41,7 +41,9 @@ async function _tryConvertToTxHex(input: string): Promise<string | null> {
   if (utils.isGZipped(input)) {
     try {
       input = await utils.decompressGZip(input);
-    } catch {}
+    } catch {
+      return null;
+    }
   }
   return input;
 }

@@ -1,3 +1,8 @@
+import { concat, decodeBase64, getBytes, hexlify } from "ethers";
+
+// Valid transactions are far smaller; the limit keeps a small compressed input from expanding without bound.
+const MAX_DECOMPRESSED_BYTES = 1024 * 1024;
+
 /**
  * Rejects if the promise is not settled within the timeout; for requests that cannot be aborted.
  */
@@ -40,21 +45,34 @@ export function isBase64(value: string): boolean {
 }
 
 export function base64ToHex(base64: string): string {
-  return Buffer.from(base64, "base64").toString("hex");
+  return hexlify(decodeBase64(base64)).slice(2);
 }
 
 export function isGZipped(hex: string): boolean {
   return toHex(hex, false).startsWith("1f8b08");
 }
 
+/**
+ * Decompresses GZIP data given in hex; throws if it is invalid or exceeds MAX_DECOMPRESSED_BYTES.
+ */
 export async function decompressGZip(hex: string): Promise<string> {
-  const decompressionStream = new DecompressionStream("gzip");
-  const decompressedStream = new ReadableStream({
-    start(controller) {
-      controller.enqueue(Buffer.from(hex, "hex"));
-      controller.close();
-    },
-  }).pipeThrough(decompressionStream);
-  const decompressedValue = await new Response(decompressedStream).arrayBuffer();
-  return Buffer.from(decompressedValue).toString("hex");
+  const reader = new Blob([new Uint8Array(getBytes(toHex(hex, true)))])
+    .stream()
+    .pipeThrough(new DecompressionStream("gzip"))
+    .getReader();
+  const chunks: Uint8Array[] = [];
+  let size = 0;
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) {
+      break;
+    }
+    size += value.length;
+    if (size > MAX_DECOMPRESSED_BYTES) {
+      await reader.cancel();
+      throw new Error(`Decompressed data exceeds ${MAX_DECOMPRESSED_BYTES} bytes`);
+    }
+    chunks.push(value);
+  }
+  return concat(chunks).slice(2);
 }

@@ -44,7 +44,7 @@ export async function verify(txHex: string): Promise<TxVerification | null> {
 
 function _tryRecoverCTx(txHex: string): evmSerial.EVMTx | null {
   try {
-    return futils.unpackWithManager("EVM", Buffer.from(txHex, "hex")) as evmSerial.EVMTx;
+    return futils.unpackWithManager("EVM", ethers.getBytes(`0x${txHex}`)) as evmSerial.EVMTx;
   } catch {
     return null;
   }
@@ -52,7 +52,7 @@ function _tryRecoverCTx(txHex: string): evmSerial.EVMTx | null {
 
 function _tryRecoverPTx(txHex: string): pvmSerial.BaseTx | null {
   try {
-    return futils.unpackWithManager("PVM", Buffer.from(txHex, "hex")) as pvmSerial.BaseTx;
+    return futils.unpackWithManager("PVM", ethers.getBytes(`0x${txHex}`)) as pvmSerial.BaseTx;
   } catch {
     return null;
   }
@@ -60,7 +60,7 @@ function _tryRecoverPTx(txHex: string): pvmSerial.BaseTx | null {
 
 function _getMessageToSign(tx: evmSerial.EVMTx | pvmSerial.BaseTx): string {
   try {
-    return utils.toHex(Buffer.from(messageHash(futils.packTx(tx))).toString("hex"), true);
+    return ethers.hexlify(messageHash(futils.packTx(tx)));
   } catch {
     throw new Error("Failed to recover message to sign");
   }
