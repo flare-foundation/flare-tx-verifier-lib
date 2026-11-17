@@ -4,6 +4,46 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [2.0.0] - 2026-11-18
+
+### Added
+
+- Verification of auto-renewed validator transactions (AddAutoRenewedValidatorTx and SetAutoRenewedValidatorConfigTx) with the transaction types addAutoRenewedValidatorP, updateAutoRenewedValidatorP and removeAutoRenewedValidatorP, and the staking parameters period, validatorAuthority and validatorTxId.
+- Warning constants exported in the namespace warning.
+- Warnings ANYONE_CAN_SPEND, ANY_OWNER_CAN_SPEND and MULTIPLE_OWNERS_REQUIRED for transaction outputs that specify no owner, multiple owners any one of whom can spend them, and multiple owners several of whom must sign.
+- Warning REWARDS_NOT_TO_STAKE_OWNER when staking rewards will be assigned to the owner of the first input, which is not the stake owner.
+- Warnings VALIDATOR_AUTHORITY_NOT_TO_STAKE_OWNER and VALIDATOR_NOT_FOUND for auto-renewed validators.
+- Warnings SAFE_DELEGATE_CALL and SAFE_GAS_REFUND for Safe transactions that make a delegate call or pay a gas refund to another address.
+- Warning CONTRACT_CALL_NOT_DECODED when a contract call cannot be decoded.
+
+### Changed
+
+- Transaction type constants and the functions isKnownType and getDescription are exported in the namespace txtype instead of at the package root.
+- The package exports only its main entry point; imports of internal files are no longer possible.
+- Node.js 24 or later is required.
+- Upgraded @flarenetwork/flarejs to version 5.2.0.
+- Contract calls whose arguments cannot be decoded return a verification with the warning CONTRACT_CALL_NOT_DECODED instead of null.
+- P-chain and atomic transactions followed by additional bytes return null; transactions are accepted unsigned or signed.
+- GZIP input larger than 1 MB after decompression returns null.
+- Network requests time out after 10 seconds.
+- Invalid entries in the lists of Flare contracts are skipped.
+- Node.js Buffer is no longer used.
+- Contract registry update.
+- Dependency updates.
+
+### Removed
+
+- Warning MULTIPLE_SIGNERS ("One or more transaction outputs specify multiple signers."), replaced by ANYONE_CAN_SPEND, ANY_OWNER_CAN_SPEND and MULTIPLE_OWNERS_REQUIRED, and no longer returned for the validator authority.
+
+### Fixed
+
+- Export from P-chain to outputs with multiple owners or no owner returned null.
+- P-chain transactions with outputs that specify no owner returned null.
+- False warnings for addresses with more than 1024 UTXOs.
+- Proxy implementation addresses starting with a zero byte were not resolved.
+- False warning for imports to P-chain that spend P-chain funds.
+- An unreachable C-chain node caused indefinite connection retries after verification.
+
 ## [1.4.0] - 2026-01-15
 
 ### Added
