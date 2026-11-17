@@ -15,3 +15,6 @@ export const VALIDATOR_AUTHORITY_NOT_TO_STAKE_OWNER =
 export const VALIDATOR_NOT_FOUND = "The validator to be updated could not be found.";
 export const REWARDS_NOT_TO_STAKE_OWNER =
   "Staking rewards will be assigned to the owner of the first input, which is not the stake owner.";
+export const SAFE_DELEGATE_CALL =
+  "The smart account executes the called contract's code as its own (delegate call), giving that code full control over the account's assets and settings.";
+export const SAFE_GAS_REFUND = "The smart account pays a gas refund from its own funds to another address.";

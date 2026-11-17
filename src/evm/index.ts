@@ -2,7 +2,7 @@ import * as txnetwork from "../txnetwork";
 import * as txtype from "../txtype";
 import * as utils from "../utils";
 import * as warning from "../warning";
-import { Transaction } from "ethers";
+import { Transaction, ZeroAddress } from "ethers";
 import { getContractData, getProxyTarget, isContract, isFlareContract } from "./contract";
 import type { SafeTxData, TxVerification, TxVerificationParameter } from "../interface";
 
@@ -209,6 +209,16 @@ async function _getSafeTxData(
     )
   ) {
     return undefined;
+  }
+  const parameter = (name: string) => sourceParameters.find((p) => p.name === name).value;
+  // Operation 1 is a delegate call: the Safe runs the target's code in its own context.
+  if (parameter("operation") === "1") {
+    warnings.add(warning.SAFE_DELEGATE_CALL);
+  }
+  // With a non-zero gas price the Safe refunds gas from its own funds, to the refund receiver
+  // or, if that is the zero address, to the account submitting the transaction.
+  if (parameter("gasPrice") !== "0" && parameter("refundReceiver").toLowerCase() !== ZeroAddress) {
+    warnings.add(warning.SAFE_GAS_REFUND);
   }
   const to = pto.value;
   const data = pdata.value;
