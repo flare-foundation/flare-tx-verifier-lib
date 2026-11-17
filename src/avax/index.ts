@@ -69,7 +69,7 @@ function _getMessageToSign(tx: evmSerial.EVMTx | pvmSerial.BaseTx): string {
 
 function _getNetwork(networkId: number, warnings: Set<string>): string {
   if (!txnetwork.isKnownPChainNetwork(networkId)) {
-    warnings.add(warning.UNKOWN_NETWORK);
+    warnings.add(warning.UNKNOWN_NETWORK);
   }
   return txnetwork.getPChainNetworkDescription(networkId);
 }
@@ -93,7 +93,7 @@ async function _tryGetCTxParams(tx: evmSerial.EVMTx): Promise<TxVerification | n
       type = txtype.IMPORT_C;
       params = _getImportCTxParams(tx as evmSerial.ImportTx, context, warnings);
     } else {
-      throw new Error("Unkown C-chain transaction type");
+      throw new Error("Unknown C-chain transaction type");
     }
     const description = txtype.getDescription(type);
     const messageToSign = _getMessageToSign(tx);
@@ -234,7 +234,7 @@ async function _tryGetPTxParams(tx: pvmSerial.BaseTx): Promise<TxVerification | 
       type = txtype.TRANSFER_P;
       params = await _getTransferPTx(tx as pvmSerial.BaseTx, context, warnings);
     } else {
-      throw new Error("Unkown P-chain transaction type");
+      throw new Error("Unknown P-chain transaction type");
     }
     const description = txtype.getDescription(type);
     const messageToSign = _getMessageToSign(tx);

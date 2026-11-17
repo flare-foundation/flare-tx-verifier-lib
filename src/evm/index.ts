@@ -49,7 +49,7 @@ export async function verify(txHex: string): Promise<TxVerification | null> {
 function _getNetwork(tx: Transaction, warnings: Set<string>): string {
   const chainId = Number(tx.chainId);
   if (!txnetwork.isKnownCChainNetwork(chainId)) {
-    warnings.add(warning.UNKOWN_NETWORK);
+    warnings.add(warning.UNKNOWN_NETWORK);
   }
   return txnetwork.getCChainNetworkDescription(chainId);
 }

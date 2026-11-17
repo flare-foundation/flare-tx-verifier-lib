@@ -1,4 +1,4 @@
-export const UNKOWN_NETWORK = "Transaction to unknown network. The data may be inaccurate or incomplete.";
+export const UNKNOWN_NETWORK = "Transaction to unknown network. The data may be inaccurate or incomplete.";
 export const FUNDS_LOCKED = "Funds will be locked after transfer.";
 export const MULTIPLE_RECIPIENTS = "Multiple recipient addresses.";
 export const MULTIPLE_SIGNERS = "One or more transaction outputs specify multiple signers.";

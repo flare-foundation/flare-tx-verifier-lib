@@ -6,6 +6,7 @@
   "files": [
     "/dist"
   ],
+  "exports": "./dist/index.js",
   "types": "dist/index.d.ts",
   "homepage": "https://github.com/flare-foundation/flare-tx-verifier-lib",
   "repository": {
