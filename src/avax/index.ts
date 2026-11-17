@@ -522,14 +522,16 @@ async function _getImportPTx(
 
   const [recipients, receivedAmounts] = _getPOutputsData(context, tx.baseTx.outputs, warnings);
 
+  // Base inputs spend the importer's own P-chain UTXOs, e.g. to pay the fee.
   const sentAmount = await _getPInputsData(
     context,
     tx.baseTx.inputs,
     recipients.length === 1 && _isSingleAddress(recipients[0]) ? [recipients[0]] : undefined,
-    context.cBlockchainID.toString(),
+    context.pBlockchainID.toString(),
     warnings
   );
 
+  // Imported inputs spend UTXOs exported from the C-chain, held in shared memory.
   const importAmount = await _getPInputsData(
     context,
     tx.ins,
