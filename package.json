@@ -30,7 +30,7 @@
     "node": ">=24.0.0"
   },
   "dependencies": {
-    "@flarenetwork/flarejs": "^4.1.1",
+    "@flarenetwork/flarejs": "5.2.0",
     "ethers": "^6.17.0"
   },
   "devDependencies": {
