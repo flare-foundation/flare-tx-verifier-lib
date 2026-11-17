@@ -2,7 +2,7 @@ import * as txnetwork from "../txnetwork";
 import * as txtype from "../txtype";
 import * as utils from "../utils";
 import * as warning from "../warning";
-import { Transaction, ZeroAddress } from "ethers";
+import { type Interface, type TransactionDescription, Transaction, ZeroAddress } from "ethers";
 import { getContractData, getProxyTarget, isContract, isFlareContract } from "./contract";
 import type { SafeTxData, TxVerification, TxVerificationParameter } from "../interface";
 
@@ -146,14 +146,14 @@ async function _getContract(
     if (contract) {
       contractName = contract.name;
       const txData = { data: tx.data, value: tx.value };
-      let description = contract.interface.parseTransaction(txData);
+      let description = _parseTransaction(contract.interface, txData);
 
       if (description == null && !decodingWithProxyTarget) {
         const proxyTargetAddress = await getProxyTarget(chainId, tx.to, tx.data);
         if (proxyTargetAddress) {
           const proxyTarget = await getContractData(chainId, proxyTargetAddress);
           if (proxyTarget != null) {
-            description = proxyTarget.interface.parseTransaction(txData);
+            description = _parseTransaction(proxyTarget.interface, txData);
             decodingWithProxyTarget = true;
           }
         }
@@ -175,6 +175,11 @@ async function _getContract(
         }
       }
     }
+
+    // Empty data sends funds to the contract without calling a method.
+    if (contractMethod === undefined && tx.data !== "0x") {
+      warnings.add(warning.CONTRACT_CALL_NOT_DECODED);
+    }
   }
 
   return {
@@ -185,6 +190,20 @@ async function _getContract(
     isFlareNetworkContract,
     parameters,
   };
+}
+
+/**
+ * Returns null if the method is not in the interface or its arguments cannot be decoded.
+ */
+function _parseTransaction(
+  contractInterface: Interface,
+  txData: { data: string; value: bigint }
+): TransactionDescription | null {
+  try {
+    return contractInterface.parseTransaction(txData);
+  } catch {
+    return null;
+  }
 }
 
 async function _getSafeTxData(

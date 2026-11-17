@@ -73,6 +73,50 @@
     }
   },
   {
+    "txHex": "0x02f84c72358459682f00850bfda3a30082abf89433913ace907f682e305f36d7538d3ccd37e2ca5b80a4b2c121920000000000000000000000008ab7028638854ae968ef5174996c17d010af4bd5c0",
+    "txVerification": {
+      "network": "Flare Testnet Coston2",
+      "type": "contractCallC",
+      "description": "Contract call on C-chain",
+      "recipients": [
+        "0x33913AcE907F682E305f36d7538D3cCd37E2cA5B"
+      ],
+      "values": [
+        "0"
+      ],
+      "fee": "2267236000000000",
+      "contractName": "ValidatorRewardManager",
+      "contractData": "0xb2c121920000000000000000000000008ab7028638854ae968ef5174996c17d010af4bd5",
+      "isFlareNetworkContract": true,
+      "warnings": [
+        "The contract call could not be decoded, so the called method and its parameters cannot be verified."
+      ],
+      "messageToSign": "0xa0315f5e3f80f3a40bb25bca24018edd3444076ed5ea91627004ac7d0cbdfa7e"
+    }
+  },
+  {
+    "txHex": "0x02f8ad72358459682f00850bfda3a30082abf89433913ace907f682e305f36d7538d3ccd37e2ca5b80b884deadbeef0000000000000000000000008ab7028638854ae968ef5174996c17d010af4bd50000000000000000000000008ab7028638854ae968ef5174996c17d010af4bd500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c0",
+    "txVerification": {
+      "network": "Flare Testnet Coston2",
+      "type": "contractCallC",
+      "description": "Contract call on C-chain",
+      "recipients": [
+        "0x33913AcE907F682E305f36d7538D3cCd37E2cA5B"
+      ],
+      "values": [
+        "0"
+      ],
+      "fee": "2267236000000000",
+      "contractName": "ValidatorRewardManager",
+      "contractData": "0xdeadbeef0000000000000000000000008ab7028638854ae968ef5174996c17d010af4bd50000000000000000000000008ab7028638854ae968ef5174996c17d010af4bd500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "isFlareNetworkContract": true,
+      "warnings": [
+        "The contract call could not be decoded, so the called method and its parameters cannot be verified."
+      ],
+      "messageToSign": "0xe2e77760c8746a270f50824396a87f88f9bcd16c1d50a0d178f7b7b017a51df1"
+    }
+  },
+  {
     "txHex": "0x01f8a90e67851bbef8d75a830529b39485627d71921ae25769f5370e482ada5e1e418d3780b884b2c1219200000000000000000000000076f95a6fce19f21845e56e39cd08e6b39bd5644f00000000000000000000000076f95a6fce19f21845e56e39cd08e6b39bd5644f00000000000000000000000000000000000000000000000000000000000000970000000000000000000000000000000000000000000000000000000000000001c0",
     "txVerification": {
       "network": "Flare Mainnet",
@@ -1357,7 +1401,9 @@
       "contractName": "FAssetProxy",
       "contractData": "0xa9059cbb0000000000000000000000002389dccf94b9033f30973e0f9c1d09baf5258f0a0000000000000000000000000000000000000000000000000000000003938700",
       "isFlareNetworkContract": true,
-      "warnings": [],
+      "warnings": [
+        "The contract call could not be decoded, so the called method and its parameters cannot be verified."
+      ],
       "messageToSign": "0x8376ec632951311f0606f20be004f231896363bacad2f81b6349c0ba21cb7202"
     }
   },
