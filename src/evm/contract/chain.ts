@@ -1,35 +1,6 @@
-import { registry } from "./registry";
 import * as settings from "../../settings";
 import * as utils from "../../utils";
-import { Contract, JsonRpcProvider, Transaction } from "ethers";
-import type { BaseContractData } from "./interface";
-
-/**
- * @deprecated
- */
-export async function getFlareNetworkContracts(network: number): Promise<Array<BaseContractData>> {
-  const provider = _getProvider(network);
-  const address = settings.FLARE_CONTRACT_REGISTRY[network];
-  const contractData = registry[network][address];
-  const contractRegistry = new Contract(address, contractData.abi, provider);
-  const contracts = await contractRegistry.getAllContracts();
-  const result: BaseContractData[] = [];
-  for (let i = 0; i < contracts[0].length; i++) {
-    result.push({
-      address: contracts[1][i].toLowerCase(),
-      name: contracts[0][i],
-    });
-  }
-  return result;
-}
-
-/**
- * @deprecated
- */
-export async function isFlareNetworkContract(network: number, address: string): Promise<boolean> {
-  const contracts = await getFlareNetworkContracts(network);
-  return contracts.find((c) => c.address === address) !== undefined;
-}
+import { JsonRpcProvider, Transaction } from "ethers";
 
 export async function isContract(network: number, address: string): Promise<boolean> {
   const code = await getContractCode(network, address);

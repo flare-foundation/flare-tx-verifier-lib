@@ -1,11 +1,13 @@
 import * as chain from "./chain";
 import * as explorer from "./explorer";
-import type { ContractData, AbiContractData } from "./interface";
+import type { ContractData, AbiContractData, ContractRegistry } from "./interface";
 import * as proxy from "./proxy";
 import * as repository from "./repository";
-import { registry } from "./registry";
+import registryJson from "./registry.json";
 import { Interface } from "ethers";
 import * as utils from "../../utils";
+
+const registry: ContractRegistry = registryJson;
 
 export async function getContractData(network: number, address: string): Promise<ContractData | null> {
   let data = _getDataFromRegistry(network, address.toLowerCase());
@@ -28,15 +30,6 @@ export async function isFlareContract(network: number, address: string): Promise
   return false;
 }
 
-export async function getFlareContracts(network: number): Promise<Array<string>> {
-  let contracts = [];
-  contracts = contracts.concat(await repository.getAddressesOfFlareSmartContractsV1(network));
-  contracts = contracts.concat(await repository.getAddressesOfFlareSmartContractsV2(network));
-  contracts = contracts.concat(await repository.getAddressesOfFlareFassetContracts(network));
-  contracts = [...new Set<string>(contracts)];
-  return contracts;
-}
-
 export async function isContract(network: number, address: string): Promise<boolean> {
   return chain.isContract(network, address.toLowerCase());
 }
@@ -50,7 +43,16 @@ export async function getProxyTarget(network: number, address: string, data: str
 }
 
 function _getDataFromRegistry(network: number, address: string): AbiContractData | null {
-  return network in registry && address in registry[network] ? registry[network][address] : null;
+  const contracts = registry.contracts[network.toString()];
+  if (contracts == null || !(address in contracts)) {
+    return null;
+  }
+  const entry = contracts[address];
+  return {
+    address,
+    name: entry.name,
+    abi: registry.abis[entry.abi],
+  };
 }
 
 async function _getDataFromExplorer(network: number, address: string): Promise<AbiContractData | null> {

@@ -1,12 +1,18 @@
 import type { Interface, InterfaceAbi } from "ethers";
 
-export type NetworkRegistry = {
-  [key: number]: ContractRegistry;
-};
+/**
+ * Bundled contract registry (registry.json). Each distinct ABI is stored once under
+ * a content hash; contracts reference their ABI by that hash.
+ */
+export interface ContractRegistry {
+  abis: { [hash: string]: InterfaceAbi };
+  contracts: { [network: string]: { [address: string]: RegistryEntry } };
+}
 
-export type ContractRegistry = {
-  [key: string]: AbiContractData;
-};
+export interface RegistryEntry {
+  name: string;
+  abi: string;
+}
 
 export interface BaseContractData {
   address: string;

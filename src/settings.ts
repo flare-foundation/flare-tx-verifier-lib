@@ -16,13 +16,6 @@ export const P_CHAIN_API: NetworkId = {
   114: "https://coston2-api.flare.network/ext/bc/P",
 };
 
-export const FLARE_CONTRACT_REGISTRY: NetworkId = {
-  14: "0xad67fe66660fb8dfe9d6b1b4240d8650e30f6019",
-  16: "0xad67fe66660fb8dfe9d6b1b4240d8650e30f6019",
-  19: "0xad67fe66660fb8dfe9d6b1b4240d8650e30f6019",
-  114: "0xad67fe66660fb8dfe9d6b1b4240d8650e30f6019",
-};
-
 export const EXPLORER: NetworkId = {
   14: "https://flare-explorer.flare.network/api",
   16: "https://coston-explorer.flare.network/api",
