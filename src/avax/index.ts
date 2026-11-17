@@ -674,14 +674,13 @@ async function _findPUTXOs(
   blockchainId?: string
 ): Promise<Set<string>> {
   const found = new Set<string>();
-  const pvmApi = _getPVMApi(context.networkID);
-  if (pvmApi == null || keys.size === 0) {
+  if (_getPVMApi(context.networkID) == null || keys.size === 0) {
     return found;
   }
 
   let startIndex: { address: string; utxo: string } | undefined;
   for (let page = 0; page < MAX_UTXO_PAGES && found.size < keys.size; page++) {
-    const response = await pvmApi.getUTXOs({
+    const response = await _getPVMApi(context.networkID).getUTXOs({
       addresses: [`P-${address}`],
       sourceChain: blockchainId,
       limit: UTXO_PAGE_SIZE,
@@ -710,12 +709,17 @@ function _checkSubnetId(
   }
 }
 
+/**
+ * Returns an API client whose requests time out; create one per request, as the timeout runs from creation.
+ */
 function _getPVMApi(networkId: number): pvm.PVMApi {
   if (!(networkId in settings.P_CHAIN_API)) {
     return null;
   }
   const uri = new URL(settings.P_CHAIN_API[networkId]).origin;
-  return new pvm.PVMApi(uri);
+  const pvmApi = new pvm.PVMApi(uri);
+  pvmApi.setFetchOptions({ signal: AbortSignal.timeout(settings.REQUEST_TIMEOUT_MS) });
+  return pvmApi;
 }
 
 async function _getContext(networkId: number): Promise<Context.Context> {
@@ -723,7 +727,8 @@ async function _getContext(networkId: number): Promise<Context.Context> {
     return null;
   }
   const uri = new URL(settings.P_CHAIN_API[networkId]).origin;
-  const context = await Context.getContextFromURI(uri);
+  // The context is built from several requests, which cannot be aborted, so they are limited together.
+  const context = await utils.withTimeout(Context.getContextFromURI(uri), settings.REQUEST_TIMEOUT_MS);
   if (context.networkID !== networkId) {
     throw new Error(`The API network ${context.networkID} does not match the expected network ${networkId}`);
   }

@@ -75,7 +75,7 @@ async function _getWithRetry(network: number, path: string, attempts = 5): Promi
 async function _get(network: number, path: string): Promise<Array<ExplorerContract>> {
   if (network in settings.EXPLORER) {
     const url = `${settings.EXPLORER[network]}${path}`;
-    const data = await fetch(url);
+    const data = await fetch(url, { signal: AbortSignal.timeout(settings.REQUEST_TIMEOUT_MS) });
     if (!data.ok) {
       throw new Error(`Explorer request failed with HTTP ${data.status}: ${url}`);
     }

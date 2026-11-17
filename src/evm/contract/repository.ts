@@ -1,3 +1,4 @@
+import * as settings from "../../settings";
 import * as txnetwork from "../../txnetwork";
 
 const FLARE_SMART_CONTRACTS_V1_URL =
@@ -38,7 +39,7 @@ async function _get(network: number, baseUrl: string): Promise<Array<DeployedCon
     return [];
   }
   try {
-    const data = await fetch(url);
+    const data = await fetch(url, { signal: AbortSignal.timeout(settings.REQUEST_TIMEOUT_MS) });
     const response = await data.json();
     return response;
   } catch {

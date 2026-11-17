@@ -1,3 +1,6 @@
+// Maximum time for a single network request.
+export const REQUEST_TIMEOUT_MS = 10000;
+
 type NetworkId = {
   [key: number]: string;
 };

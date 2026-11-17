@@ -1,3 +1,18 @@
+/**
+ * Rejects if the promise is not settled within the timeout; for requests that cannot be aborted.
+ */
+export async function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  let timer: ReturnType<typeof setTimeout>;
+  const timeout = new Promise<never>((_, reject) => {
+    timer = setTimeout(() => reject(new Error(`Request timed out after ${ms} ms`)), ms);
+  });
+  try {
+    return await Promise.race([promise, timeout]);
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 export function toHex(value: string, prefix: boolean): string {
   if (!isHex(value)) {
     throw new Error("Not a hex value");
