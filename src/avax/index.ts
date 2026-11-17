@@ -4,6 +4,7 @@ import * as settings from "../settings";
 import * as utils from "../utils";
 import * as warning from "../warning";
 import {
+  avaxSerial,
   Context,
   type evmSerial,
   pvmSerial,
@@ -42,9 +43,26 @@ export async function verify(txHex: string): Promise<TxVerification | null> {
   return null;
 }
 
+/**
+ * Unpacks a transaction given either unsigned or signed (followed by its credentials, which are not
+ * verified). Throws if the bytes are neither exactly, as the node would reject the transaction.
+ */
+function _unpackTx(vm: "EVM" | "PVM", txHex: string): ReturnType<typeof futils.unpackWithManager> {
+  const bytes = ethers.getBytes(`0x${txHex}`);
+  const tx = futils.unpackWithManager(vm, bytes);
+  if (futils.packTx(tx).length === bytes.length) {
+    return tx;
+  }
+  const signedTx = futils.getManagerForVM(vm).unpack(bytes, avaxSerial.SignedTx);
+  if (signedTx.toBytes().length === bytes.length) {
+    return signedTx.unsignedTx;
+  }
+  throw new Error("Unexpected bytes after the transaction");
+}
+
 function _tryRecoverCTx(txHex: string): evmSerial.EVMTx | null {
   try {
-    return futils.unpackWithManager("EVM", ethers.getBytes(`0x${txHex}`)) as evmSerial.EVMTx;
+    return _unpackTx("EVM", txHex) as evmSerial.EVMTx;
   } catch {
     return null;
   }
@@ -52,7 +70,7 @@ function _tryRecoverCTx(txHex: string): evmSerial.EVMTx | null {
 
 function _tryRecoverPTx(txHex: string): pvmSerial.BaseTx | null {
   try {
-    return futils.unpackWithManager("PVM", ethers.getBytes(`0x${txHex}`)) as pvmSerial.BaseTx;
+    return _unpackTx("PVM", txHex) as pvmSerial.BaseTx;
   } catch {
     return null;
   }
