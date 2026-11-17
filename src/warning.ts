@@ -1,7 +1,11 @@
 export const UNKNOWN_NETWORK = "Transaction to unknown network. The data may be inaccurate or incomplete.";
 export const FUNDS_LOCKED = "Funds will be locked after transfer.";
 export const MULTIPLE_RECIPIENTS = "Multiple recipient addresses.";
-export const MULTIPLE_SIGNERS = "One or more transaction outputs specify multiple signers.";
+export const ANYONE_CAN_SPEND = "One or more transaction outputs specify no owner, so anyone can spend them.";
+export const ANY_OWNER_CAN_SPEND =
+  "One or more transaction outputs specify multiple owners, and any one of them can spend the funds alone.";
+export const MULTIPLE_OWNERS_REQUIRED =
+  "One or more transaction outputs specify multiple owners, and several of them must sign to spend the funds.";
 export const FUNDS_NOT_RETURNED = "Funds might not be transferred to the signer address.";
 export const UNSPENT_AMOUNT_NOT_TO_RECIPIENT = "Unspent amount is not transferred to the recipient.";
 export const INVALID_BLOCKCHAIN = "Transaction specifies an invalid blockchain.";

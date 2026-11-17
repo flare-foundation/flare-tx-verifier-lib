@@ -135,9 +135,7 @@ function _getExportCTxParams(tx: evmSerial.ExportTx, context: Context.Context, w
   for (let i = 0; i < outputs.length; i++) {
     const output = outputs[i].output as TransferOutput;
     const addresses = output.outputOwners.addrs;
-    if (addresses.length > 1) {
-      warnings.add(warning.MULTIPLE_SIGNERS);
-    }
+    _checkOutputOwners(output.outputOwners, warnings);
     const address = _addressesToString(addresses, context.hrp);
     const index = exportRecipients.indexOf(address);
     if (index < 0) {
@@ -296,7 +294,7 @@ async function _getStakeTxData(
   const sentAmount = await _getPInputsData(
     context,
     tx.baseTx.inputs,
-    recipients.length === 1 && !recipients[0].includes(",") ? [recipients[0]] : undefined,
+    recipients.length === 1 && _isSingleAddress(recipients[0]) ? [recipients[0]] : undefined,
     undefined,
     warnings
   );
@@ -358,7 +356,7 @@ async function _getAddAutoRenewedValidatorParams(
   const sentAmount = await _getPInputsData(
     context,
     tx.baseTx.inputs,
-    recipients.length === 1 && !recipients[0].includes(",") ? [recipients[0]] : undefined,
+    recipients.length === 1 && _isSingleAddress(recipients[0]) ? [recipients[0]] : undefined,
     undefined,
     warnings
   );
@@ -376,10 +374,8 @@ async function _getAddAutoRenewedValidatorParams(
 
   // Rewards owners and auto-compounding are not reported: Flare pays no staking rewards
   // on the P-chain (staking rewards are claimed on the C-chain).
+  // An authority with no or multiple addresses is reported by VALIDATOR_AUTHORITY_NOT_TO_STAKE_OWNER.
   const authority = tx.getValidatorAuthority();
-  if (authority.addrs.length !== 1) {
-    warnings.add(warning.MULTIPLE_SIGNERS);
-  }
   const validatorAuthority = _addressesToString(authority.addrs, context.hrp);
   if (stakeoutRecipients.length !== 1 || validatorAuthority !== stakeoutRecipients[0]) {
     warnings.add(warning.VALIDATOR_AUTHORITY_NOT_TO_STAKE_OWNER);
@@ -421,7 +417,7 @@ async function _getSetAutoRenewedValidatorParams(
   const sentAmount = await _getPInputsData(
     context,
     tx.baseTx.inputs,
-    recipients.length === 1 && !recipients[0].includes(",") ? [recipients[0]] : undefined,
+    recipients.length === 1 && _isSingleAddress(recipients[0]) ? [recipients[0]] : undefined,
     undefined,
     warnings
   );
@@ -486,7 +482,7 @@ async function _getExportPTx(
   const utxoSentAmount = await _getPInputsData(
     context,
     tx.baseTx.inputs,
-    exportRecipients.length === 1 && !exportRecipients.includes(",") ? [exportRecipients[0]] : undefined,
+    exportRecipients.length === 1 && _isSingleAddress(exportRecipients[0]) ? [exportRecipients[0]] : undefined,
     undefined,
     warnings
   );
@@ -512,7 +508,7 @@ async function _getImportPTx(
   const sentAmount = await _getPInputsData(
     context,
     tx.baseTx.inputs,
-    recipients.length === 1 && !recipients[0].includes(",") ? [recipients[0]] : undefined,
+    recipients.length === 1 && _isSingleAddress(recipients[0]) ? [recipients[0]] : undefined,
     context.cBlockchainID.toString(),
     warnings
   );
@@ -520,7 +516,7 @@ async function _getImportPTx(
   const importAmount = await _getPInputsData(
     context,
     tx.ins,
-    recipients.length === 1 && !recipients[0].includes(",") ? [recipients[0]] : undefined,
+    recipients.length === 1 && _isSingleAddress(recipients[0]) ? [recipients[0]] : undefined,
     context.cBlockchainID.toString(),
     warnings
   );
@@ -544,7 +540,7 @@ async function _getTransferPTx(
   const sentAmount = await _getPInputsData(
     context,
     tx.baseTx.inputs,
-    recipients.length > 1 && !recipients.some((r) => r.includes(",")) ? recipients : undefined,
+    recipients.length > 1 && recipients.every(_isSingleAddress) ? recipients : undefined,
     context.pBlockchainID.toString(),
     warnings
   );
@@ -575,8 +571,8 @@ async function _checkFirstInputOwner(
     warnings.add(warning.REWARDS_NOT_TO_STAKE_OWNER);
     return;
   }
-  if (stakeOwners[0].includes(",")) {
-    // Multiple stake owner addresses are already reported by MULTIPLE_SIGNERS.
+  if (!_isSingleAddress(stakeOwners[0])) {
+    // Stake outputs with no or multiple owners are already reported by _checkOutputOwners.
     return;
   }
   const utxos = await _getPUTXOs(context, stakeOwners[0]);
@@ -616,6 +612,26 @@ async function _getPInputsData(
   return sentAmount;
 }
 
+/**
+ * Outputs with no owner have an empty address string, those with multiple owners a comma-separated list.
+ */
+function _isSingleAddress(address: string): boolean {
+  return address !== "" && !address.includes(",");
+}
+
+/**
+ * An output is spent by signatures of `threshold` of its addresses. The chain accepts threshold 0
+ * only with no addresses, which makes the output spendable by anyone without a signature.
+ */
+function _checkOutputOwners(owners: TransferOutput["outputOwners"], warnings: Set<string>): void {
+  const threshold = owners.threshold.value();
+  if (threshold === 0 || owners.addrs.length === 0) {
+    warnings.add(warning.ANYONE_CAN_SPEND);
+  } else if (owners.addrs.length > 1) {
+    warnings.add(threshold === 1 ? warning.ANY_OWNER_CAN_SPEND : warning.MULTIPLE_OWNERS_REQUIRED);
+  }
+}
+
 function _getPOutputsData(
   context: Context.Context,
   outputs: ReadonlyArray<TransferableOutput>,
@@ -627,9 +643,7 @@ function _getPOutputsData(
   for (const output of outputs) {
     const ao = output.output as TransferOutput;
     const addresses = ao.outputOwners.addrs;
-    if (addresses.length !== 1) {
-      warnings.add(warning.MULTIPLE_SIGNERS);
-    }
+    _checkOutputOwners(ao.outputOwners, warnings);
     const address = _addressesToString(addresses, context.hrp);
     const index = recipients.indexOf(address);
     if (index < 0) {
