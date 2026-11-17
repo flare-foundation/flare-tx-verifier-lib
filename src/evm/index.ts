@@ -61,7 +61,7 @@ async function _isRecipientFlrNetContract(tx: Transaction): Promise<boolean> {
   if (!txnetwork.isKnownCChainNetwork(chainId)) {
     return false;
   }
-  return await isFlareContract(chainId, tx.to!);
+  return await isFlareContract(chainId, tx.to);
 }
 
 async function _getType(tx: Transaction, isRecipientFlrNetContract: boolean): Promise<string> {
@@ -119,20 +119,19 @@ async function _getContract(
   let contractName: string | undefined;
   let contractMethod: string | undefined;
   let contractMethodABI: string | undefined;
-  let contractData: string | undefined;
   let isFlareNetworkContract: boolean | undefined;
   let parameters: Array<TxVerificationParameter> | undefined;
 
   const chainId = Number(tx.chainId);
 
-  contractData = tx.data;
+  const contractData = tx.data;
   isFlareNetworkContract = isRecipientFlrNetContract;
   if (tx.to != null && txnetwork.isKnownCChainNetwork(chainId)) {
-    let contract = await getContractData(chainId, tx.to!);
+    let contract = await getContractData(chainId, tx.to);
 
     let decodingWithProxyTarget = false;
     if (contract == null) {
-      const proxyTargetAddress = await getProxyTarget(chainId, tx.to!, tx.data);
+      const proxyTargetAddress = await getProxyTarget(chainId, tx.to, tx.data);
       if (proxyTargetAddress) {
         contract = await getContractData(chainId, proxyTargetAddress);
         decodingWithProxyTarget = true;
@@ -145,7 +144,7 @@ async function _getContract(
       let description = contract.interface.parseTransaction(txData);
 
       if (description == null && !decodingWithProxyTarget) {
-        const proxyTargetAddress = await getProxyTarget(chainId, tx.to!, tx.data);
+        const proxyTargetAddress = await getProxyTarget(chainId, tx.to, tx.data);
         if (proxyTargetAddress) {
           const proxyTarget = await getContractData(chainId, proxyTargetAddress);
           if (proxyTarget != null) {
