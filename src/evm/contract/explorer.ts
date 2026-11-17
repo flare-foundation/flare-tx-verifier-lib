@@ -1,14 +1,20 @@
 import * as settings from "../../settings";
 import type { AbiContractData } from "./interface";
 
+interface ExplorerContract {
+  Address?: string;
+  ABI?: string;
+  ContractName?: string;
+}
+
 interface Response {
-  result: any;
+  result: Array<ExplorerContract>;
   message: string;
   status: string;
 }
 
 export async function getContract(network: number, address: string): Promise<AbiContractData | null> {
-  const contracts = (await _get(network, `?module=contract&action=getsourcecode&address=${address}`)) as Array<any>;
+  const contracts = await _get(network, `?module=contract&action=getsourcecode&address=${address}`);
   if (contracts.length > 1) {
     throw new Error("Unexpected number of contracts");
   } else if (contracts.length === 1) {
@@ -23,10 +29,7 @@ export async function getContracts(network: number): Promise<Array<AbiContractDa
   const offset = 1000;
   let page = 1;
   while (true) {
-    const data = (await _get(
-      network,
-      `?module=contract&action=listcontracts&page=${page}&offset=${offset}&filter=1`
-    )) as Array<any>;
+    const data = await _get(network, `?module=contract&action=listcontracts&page=${page}&offset=${offset}&filter=1`);
     for (const item of data) {
       const contract = _parseContract(item);
       if (contract != null) {
@@ -41,7 +44,7 @@ export async function getContracts(network: number): Promise<Array<AbiContractDa
   return contracts;
 }
 
-function _parseContract(contract: any): AbiContractData | null {
+function _parseContract(contract: ExplorerContract): AbiContractData | null {
   if (contract?.Address && contract.ABI) {
     return {
       address: contract.Address.toLowerCase(),
@@ -53,7 +56,7 @@ function _parseContract(contract: any): AbiContractData | null {
   }
 }
 
-async function _get(network: number, path: string): Promise<any> {
+async function _get(network: number, path: string): Promise<Array<ExplorerContract>> {
   if (network in settings.EXPLORER) {
     const url = `${settings.EXPLORER[network]}${path}`;
     const data = await fetch(url);

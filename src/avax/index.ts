@@ -10,7 +10,6 @@ import {
   utils as futils,
   TypeSymbols,
   type TransferOutput,
-  type Int,
   messageHash,
   type Address,
   type TransferableOutput,
@@ -20,6 +19,13 @@ import {
 } from "@flarenetwork/flarejs";
 import type { TxVerification, TxVerificationParameter } from "../interface";
 import { ethers } from "ethers";
+
+type TxParams = Pick<TxVerification, "recipients" | "values" | "fee" | "parameters">;
+
+interface UTXORef {
+  txId: string;
+  outputIdx: number;
+}
 
 export async function verify(txHex: string): Promise<TxVerification | null> {
   txHex = utils.toHex(txHex, false);
@@ -79,7 +85,7 @@ async function _tryGetCTxParams(tx: evmSerial.EVMTx): Promise<TxVerification | n
 
     const network = _getNetwork(networkId, warnings);
     let type: string;
-    let params: any;
+    let params: TxParams;
     if (tx._type === TypeSymbols.EvmExportTx) {
       type = txtype.EXPORT_C;
       params = _getExportCTxParams(tx as evmSerial.ExportTx, context, warnings);
@@ -106,14 +112,14 @@ async function _tryGetCTxParams(tx: evmSerial.EVMTx): Promise<TxVerification | n
 }
 
 function _getNetworkIdFromEVMTx(tx: evmSerial.EVMTx): number {
-  const networkIdInt = (tx as any).networkId;
+  const networkIdInt = (tx as evmSerial.ExportTx | evmSerial.ImportTx).networkId;
   if (!networkIdInt) {
     throw new Error("Failed to obtain network id from EVM transaction");
   }
-  return (networkIdInt as Int).value();
+  return networkIdInt.value();
 }
 
-function _getExportCTxParams(tx: evmSerial.ExportTx, context: Context.Context, warnings: Set<string>): any {
+function _getExportCTxParams(tx: evmSerial.ExportTx, context: Context.Context, warnings: Set<string>): TxParams {
   _checkPBlockchainId(context, tx.destinationChain.toString(), warnings);
 
   const inputs = tx.ins;
@@ -156,7 +162,7 @@ function _getExportCTxParams(tx: evmSerial.ExportTx, context: Context.Context, w
   };
 }
 
-function _getImportCTxParams(tx: evmSerial.ImportTx, context: Context.Context, warnings: Set<string>): any {
+function _getImportCTxParams(tx: evmSerial.ImportTx, context: Context.Context, warnings: Set<string>): TxParams {
   _checkPBlockchainId(context, tx.sourceChain.toString(), warnings);
 
   const inputs = tx.importedInputs;
@@ -205,7 +211,7 @@ async function _tryGetPTxParams(tx: pvmSerial.BaseTx): Promise<TxVerification | 
 
     const network = _getNetwork(networkId, warnings);
     let type: string;
-    let params: any;
+    let params: TxParams;
     if (tx._type === TypeSymbols.AddPermissionlessDelegatorTx) {
       type = txtype.ADD_DELEGATOR_P;
       params = await _getAddDelegatorParams(tx as pvmSerial.AddPermissionlessDelegatorTx, context, warnings);
@@ -249,7 +255,7 @@ async function _getAddDelegatorParams(
   tx: pvmSerial.AddPermissionlessDelegatorTx | pvmSerial.AddDelegatorTx,
   context: Context.Context,
   warnings: Set<string>
-): Promise<any> {
+): Promise<TxParams> {
   return _getStakeTxData(tx, context, warnings);
 }
 
@@ -257,7 +263,7 @@ async function _getAddValidatorParams(
   tx: pvmSerial.AddPermissionlessValidatorTx | pvmSerial.AddValidatorTx,
   context: Context.Context,
   warnings: Set<string>
-): Promise<any> {
+): Promise<TxParams> {
   return _getStakeTxData(tx, context, warnings);
 }
 
@@ -269,7 +275,7 @@ async function _getStakeTxData(
     | pvmSerial.AddValidatorTx,
   context: Context.Context,
   warnings: Set<string>
-): Promise<any> {
+): Promise<TxParams> {
   if (tx instanceof pvmSerial.AddDelegatorTx || tx instanceof pvmSerial.AddValidatorTx) {
     warnings.add(warning.DEPRECATED_TX);
   }
@@ -330,7 +336,11 @@ async function _getStakeTxData(
   };
 }
 
-async function _getExportPTx(tx: pvmSerial.ExportTx, context: Context.Context, warnings: Set<string>): Promise<any> {
+async function _getExportPTx(
+  tx: pvmSerial.ExportTx,
+  context: Context.Context,
+  warnings: Set<string>
+): Promise<TxParams> {
   _checkCBlockchainId(context, tx.destination.toString(), warnings);
   const [utxoRecipients, utxoReceivedAmounts] = _getPOutputsData(context, tx.baseTx.outputs, warnings);
   const [exportRecipients, exportAmounts] = _getPOutputsData(context, tx.outs, warnings);
@@ -353,7 +363,11 @@ async function _getExportPTx(tx: pvmSerial.ExportTx, context: Context.Context, w
   };
 }
 
-async function _getImportPTx(tx: pvmSerial.ImportTx, context: Context.Context, warnings: Set<string>): Promise<any> {
+async function _getImportPTx(
+  tx: pvmSerial.ImportTx,
+  context: Context.Context,
+  warnings: Set<string>
+): Promise<TxParams> {
   _checkCBlockchainId(context, tx.sourceChain.toString(), warnings);
 
   const [recipients, receivedAmounts] = _getPOutputsData(context, tx.baseTx.outputs, warnings);
@@ -383,7 +397,11 @@ async function _getImportPTx(tx: pvmSerial.ImportTx, context: Context.Context, w
   };
 }
 
-async function _getTransferPTx(tx: pvmSerial.BaseTx, context: Context.Context, warnings: Set<string>): Promise<any> {
+async function _getTransferPTx(
+  tx: pvmSerial.BaseTx,
+  context: Context.Context,
+  warnings: Set<string>
+): Promise<TxParams> {
   const [recipients, receivedAmounts] = _getPOutputsData(context, tx.baseTx.outputs, warnings, 2);
 
   const sentAmount = await _getPInputsData(
@@ -410,7 +428,7 @@ async function _getPInputsData(
   blockchainId: string | undefined,
   warnings: Set<string>
 ): Promise<bigint> {
-  let utxos: any[] = [];
+  let utxos: UTXORef[] = [];
   if (addresses) {
     for (const address of addresses) {
       utxos = utxos.concat(await _getPUTXOs(context, address, blockchainId));
@@ -463,10 +481,10 @@ function _getPOutputsData(
   return [recipients, receivedAmounts];
 }
 
-async function _getPUTXOs(context: Context.Context, address: string, blockchainId?: string): Promise<Array<any>> {
+async function _getPUTXOs(context: Context.Context, address: string, blockchainId?: string): Promise<Array<UTXORef>> {
   const pvmApi = _getPVMApi(context.networkID);
   if (pvmApi == null) {
-    return [] as any[];
+    return [];
   }
 
   const response = await pvmApi.getUTXOs({ addresses: [`P-${address}`], sourceChain: blockchainId });

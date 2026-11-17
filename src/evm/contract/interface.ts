@@ -1,4 +1,4 @@
-import type { Interface } from "ethers";
+import type { Interface, InterfaceAbi } from "ethers";
 
 export type NetworkRegistry = {
   [key: number]: ContractRegistry;
@@ -14,7 +14,7 @@ export interface BaseContractData {
 }
 
 export interface AbiContractData extends BaseContractData {
-  abi: any;
+  abi: InterfaceAbi;
 }
 
 export interface ContractData extends AbiContractData {

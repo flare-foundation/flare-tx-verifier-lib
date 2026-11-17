@@ -6,6 +6,11 @@ import { Transaction } from "ethers";
 import { getContractData, getProxyTarget, isContract, isFlareContract } from "./contract";
 import type { SafeTxData, TxVerification, TxVerificationParameter } from "../interface";
 
+type ContractParams = Pick<
+  TxVerification,
+  "contractName" | "contractMethod" | "contractMethodABI" | "contractData" | "isFlareNetworkContract" | "parameters"
+>;
+
 export async function verify(txHex: string): Promise<TxVerification | null> {
   let tx: Transaction;
   try {
@@ -111,7 +116,7 @@ async function _getContract(
   type: string,
   isRecipientFlrNetContract: boolean,
   warnings: Set<string>
-): Promise<any> {
+): Promise<ContractParams> {
   if (type !== txtype.CONTRACT_CALL_C) {
     return {};
   }

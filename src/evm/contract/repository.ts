@@ -19,18 +19,20 @@ export async function getAddressesOfFlareFassetContracts(network: number): Promi
   return _getAddresses(network, FLARE_FASSET_CONTRACTS_URL);
 }
 
+type DeployedContract = { addresses: Array<string> } | { address: string };
+
 async function _getAddresses(network: number, baseUrl: string): Promise<Array<string>> {
   const contracts = await _get(network, baseUrl);
-  if (contracts.every((c) => "addresses" in c)) {
+  if (contracts.every((c): c is { addresses: Array<string> } => "addresses" in c)) {
     return contracts.flatMap((c) => c.addresses);
   }
-  if (contracts.every((c) => "address" in c)) {
+  if (contracts.every((c): c is { address: string } => "address" in c)) {
     return contracts.map((c) => c.address);
   }
   return [];
 }
 
-async function _get(network: number, baseUrl: string): Promise<Array<any>> {
+async function _get(network: number, baseUrl: string): Promise<Array<DeployedContract>> {
   const url = _getJsonUrl(network, baseUrl);
   if (url == null) {
     return [];
