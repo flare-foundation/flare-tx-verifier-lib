@@ -22,10 +22,9 @@ import { ethers } from "ethers";
 
 type TxParams = Pick<TxVerification, "recipients" | "values" | "fee" | "parameters">;
 
-interface UTXORef {
-  txId: string;
-  outputIdx: number;
-}
+// The node returns at most 1024 UTXOs per request; further pages are fetched up to the cap.
+const UTXO_PAGE_SIZE = 1024;
+const MAX_UTXO_PAGES = 20;
 
 export async function verify(txHex: string): Promise<TxVerification | null> {
   txHex = utils.toHex(txHex, false);
@@ -575,10 +574,9 @@ async function _checkFirstInputOwner(
     // Stake outputs with no or multiple owners are already reported by _checkOutputOwners.
     return;
   }
-  const utxos = await _getPUTXOs(context, stakeOwners[0]);
-  const txId = inputs[0].utxoID.txID.toString();
-  const outputIdx = inputs[0].utxoID.outputIdx.value();
-  if (!utxos.find((u) => u.txId === txId && u.outputIdx === outputIdx)) {
+  const key = _utxoKey(inputs[0]);
+  const found = await _findPUTXOs(context, stakeOwners[0], new Set([key]));
+  if (!found.has(key)) {
     warnings.add(warning.REWARDS_NOT_TO_STAKE_OWNER);
   }
 }
@@ -590,10 +588,14 @@ async function _getPInputsData(
   blockchainId: string | undefined,
   warnings: Set<string>
 ): Promise<bigint> {
-  let utxos: UTXORef[] = [];
+  const found = new Set<string>();
   if (addresses) {
+    const keys = new Set(inputs.map(_utxoKey));
     for (const address of addresses) {
-      utxos = utxos.concat(await _getPUTXOs(context, address, blockchainId));
+      const missing = new Set([...keys].filter((k) => !found.has(k)));
+      for (const key of await _findPUTXOs(context, address, missing, blockchainId)) {
+        found.add(key);
+      }
     }
   }
   let sentAmount = BigInt(0);
@@ -601,12 +603,8 @@ async function _getPInputsData(
     const ai = input.input;
     sentAmount += ai.amount();
     _checkPAssetId(context, input.assetId.toString(), warnings);
-    if (addresses) {
-      const txId = input.utxoID.txID.toString();
-      const outputIdx = input.utxoID.outputIdx.value();
-      if (!utxos.find((u) => u.txId === txId && u.outputIdx === outputIdx)) {
-        warnings.add(warning.FUNDS_NOT_RETURNED);
-      }
+    if (addresses && !found.has(_utxoKey(input))) {
+      warnings.add(warning.FUNDS_NOT_RETURNED);
     }
   }
   return sentAmount;
@@ -661,19 +659,46 @@ function _getPOutputsData(
   return [recipients, receivedAmounts];
 }
 
-async function _getPUTXOs(context: Context.Context, address: string, blockchainId?: string): Promise<Array<UTXORef>> {
+function _utxoKey(input: TransferableInput): string {
+  return `${input.utxoID.txID.toString()}:${input.utxoID.outputIdx.value()}`;
+}
+
+/**
+ * Returns the UTXOs among `keys` that are owned by `address`. Pages are fetched until all of them
+ * are found, the address has no more UTXOs, or MAX_UTXO_PAGES is reached.
+ */
+async function _findPUTXOs(
+  context: Context.Context,
+  address: string,
+  keys: Set<string>,
+  blockchainId?: string
+): Promise<Set<string>> {
+  const found = new Set<string>();
   const pvmApi = _getPVMApi(context.networkID);
-  if (pvmApi == null) {
-    return [];
+  if (pvmApi == null || keys.size === 0) {
+    return found;
   }
 
-  const response = await pvmApi.getUTXOs({ addresses: [`P-${address}`], sourceChain: blockchainId });
-  return response.utxos.map((u) => {
-    return {
-      txId: u.utxoId.txID.toString(),
-      outputIdx: u.utxoId.outputIdx.value(),
-    };
-  });
+  let startIndex: { address: string; utxo: string } | undefined;
+  for (let page = 0; page < MAX_UTXO_PAGES && found.size < keys.size; page++) {
+    const response = await pvmApi.getUTXOs({
+      addresses: [`P-${address}`],
+      sourceChain: blockchainId,
+      limit: UTXO_PAGE_SIZE,
+      startIndex,
+    });
+    for (const utxo of response.utxos) {
+      const key = `${utxo.utxoId.txID.toString()}:${utxo.utxoId.outputIdx.value()}`;
+      if (keys.has(key)) {
+        found.add(key);
+      }
+    }
+    if (response.utxos.length < UTXO_PAGE_SIZE) {
+      break;
+    }
+    startIndex = response.endIndex;
+  }
+  return found;
 }
 
 function _checkSubnetId(
