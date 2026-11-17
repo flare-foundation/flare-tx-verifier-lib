@@ -16,7 +16,7 @@
     "esModuleInterop": true,
     "typeRoots": ["dist/**", "./node_modules/@types"]
   },
-  "exclude": ["node_modules", "dist"],
+  "exclude": ["node_modules", "dist", "build"],
   "typeAcquisition": {
     "enable": true,
     "exclude": ["bn.js"]
