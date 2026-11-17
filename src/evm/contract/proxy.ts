@@ -153,8 +153,10 @@ async function _getAddressFromContractSlot(
     return null;
   }
   const provider = _getProvider(network);
-  const address = await provider.getStorage(contractAddress, contractSlot);
-  return utils.isZeroHex(address) ? null : ethers.stripZerosLeft(address);
+  const value = await provider.getStorage(contractAddress, contractSlot);
+  // An address occupies the lowest 20 bytes of the 32-byte slot.
+  const address = ethers.dataSlice(value, 12);
+  return utils.isZeroHex(address) ? null : ethers.getAddress(address);
 }
 
 async function _getAddressFromContractMethod(
