@@ -584,7 +584,8 @@
         }
       ],
       "warnings": [
-        "Funds might not be transferred to the signer address."
+        "Funds might not be transferred to the signer address.",
+        "Staking rewards will be assigned to the owner of the first input, which is not the stake owner."
       ],
       "messageToSign": "0xe1e347fa2e073f130005380e031f86b8be5f8d6bd9b3eac1b41d7b8ee547c07f"
     }
@@ -616,7 +617,9 @@
           "value": "1750060701"
         }
       ],
-      "warnings": [],
+      "warnings": [
+        "Staking rewards will be assigned to the owner of the first input, which is not the stake owner."
+      ],
       "messageToSign": "0xa2cfc2b416051519a9650472722c494632d2adae0bf6562fecd83a76358ab7f3"
     }
   },
@@ -648,7 +651,8 @@
         }
       ],
       "warnings": [
-        "Funds might not be transferred to the signer address."
+        "Funds might not be transferred to the signer address.",
+        "Staking rewards will be assigned to the owner of the first input, which is not the stake owner."
       ],
       "messageToSign": "0xae417fccbe77db5864a7aeb283b501da09fcbd889f690e779d50d7b46fa26e5b"
     }
@@ -681,7 +685,8 @@
         }
       ],
       "warnings": [
-        "The transaction type is deprecated and may not be accepted by the network."
+        "The transaction type is deprecated and may not be accepted by the network.",
+        "Staking rewards will be assigned to the owner of the first input, which is not the stake owner."
       ],
       "messageToSign": "0x1f936eed3578b16b6ea4b59d745516d68452d41bdf19b3c0e7499a2d2a7a01c3"
     }
@@ -718,7 +723,8 @@
         }
       ],
       "warnings": [
-        "Funds might not be transferred to the signer address."
+        "Funds might not be transferred to the signer address.",
+        "Staking rewards will be assigned to the owner of the first input, which is not the stake owner."
       ],
       "messageToSign": "0x287dac3fd9fc12b27f9d91a7706d692740998016e78bdbe3710afe39bf818d83"
     }
@@ -755,7 +761,8 @@
         }
       ],
       "warnings": [
-        "Funds might not be transferred to the signer address."
+        "Funds might not be transferred to the signer address.",
+        "Staking rewards will be assigned to the owner of the first input, which is not the stake owner."
       ],
       "messageToSign": "0xba12413f075e323541cf8d3257e2569ecf1a312fbc1ad89771c01a1e93f90fb0"
     }
@@ -793,7 +800,8 @@
       ],
       "warnings": [
         "The transaction type is deprecated and may not be accepted by the network.",
-        "Funds might not be transferred to the signer address."
+        "Funds might not be transferred to the signer address.",
+        "Staking rewards will be assigned to the owner of the first input, which is not the stake owner."
       ],
       "messageToSign": "0x1adb8afa07ef1da716f10fc3c3fde216d96ceb027c81b84795f1ce8560e88092"
     }
@@ -1023,6 +1031,102 @@
         "Transaction to unknown network. The data may be inaccurate or incomplete."
       ],
       "messageToSign": "0x287afdfb72147cf5313929613c51250cf87f905d1d9d24fdacc7eb343721c863"
+    }
+  },
+  {
+    "txHex": "0x0000000000280000007200000000000000000000000000000000000000000000000000000000000000000000000158734f94af871c3d131b56131b6fb7a0291eacadd261e69dfb42a9cdf6f7fddd00000007000000003b1926b000000000000000000000000100000001253a6c90f28b3ab14e3daeb01171526e8e44424700000002103c9e5a4368df1567ca8c486a2a497c9168d0e18cb5549db90f688c45d002910000000058734f94af871c3d131b56131b6fb7a0291eacadd261e69dfb42a9cdf6f7fddd00000005000000003b57f6ac0000000100000000103c9e5a4368df1567ca8c486a2a497c9168d0e18cb5549db90f688c45d002910000000158734f94af871c3d131b56131b6fb7a0291eacadd261e69dfb42a9cdf6f7fddd0000000500038d7ea4c6800000000001000000000000000000000014e9ea8507f0f70a47f0a60ab124ed17fe0a5706d50000001c88e29d5ccb491dfffe42c39174973d5ebe9ec54cc1cf84c2594aa1a36db2bc443c60715b2838e55131e5eed41317a1ce815170240c4838366fdaa22667d3f1ad9b73063b2d15720c5188e7908631459851f2489a0101d77833898fd69d2107ab124ffdae8e147c5410d388b0cd26dd34cea8f52d0bc7be33aa5c2b587c658fd88dc0cca6f2c5e6e8b2901f7870c5f87b0000000158734f94af871c3d131b56131b6fb7a0291eacadd261e69dfb42a9cdf6f7fddd0000000700038d7ea4c6800000000000000000000000000100000001253a6c90f28b3ab14e3daeb01171526e8e4442470000000b00000000000000000000000100000001253a6c90f28b3ab14e3daeb01171526e8e4442470000000b00000000000000000000000100000001253a6c90f28b3ab14e3daeb01171526e8e4442470000000b00000000000000000000000100000001253a6c90f28b3ab14e3daeb01171526e8e44424700030d40000000000000000000093a80",
+    "txVerification": {
+      "network": "Flare Testnet Coston2",
+      "type": "addAutoRenewedValidatorP",
+      "description": "Add auto-renewed validator on P-chain",
+      "recipients": [
+        "costwo1y5axey8j3vatzn3a46cpzu2jd68ygsj84m5l59"
+      ],
+      "values": [
+        "1000000000000000000000000"
+      ],
+      "fee": "4116476000000000",
+      "parameters": [
+        {
+          "name": "nodeId",
+          "value": "NodeID-NKqPQeBNRT82BSHjFT9hCygtYQQBSBST7"
+        },
+        {
+          "name": "period",
+          "value": "604800"
+        },
+        {
+          "name": "delegationFee",
+          "value": "20"
+        },
+        {
+          "name": "validatorAuthority",
+          "value": "costwo1y5axey8j3vatzn3a46cpzu2jd68ygsj84m5l59"
+        }
+      ],
+      "warnings": [
+        "Funds might not be transferred to the signer address.",
+        "Staking rewards will be assigned to the owner of the first input, which is not the stake owner."
+      ],
+      "messageToSign": "0x5e0c1abc97a6669e44309b89ff1063154ba30f0d09cf61a0f67bd8b8a5770f2d"
+    }
+  },
+  {
+    "txHex": "0x0000000000290000007200000000000000000000000000000000000000000000000000000000000000000000000158734f94af871c3d131b56131b6fb7a0291eacadd261e69dfb42a9cdf6f7fddd00000007000000003afcd71000000000000000000000000100000001253a6c90f28b3ab14e3daeb01171526e8e44424700000001a8fb4b8493de3efc2b844cce494dcdb9c15166af021c8131a294743991f1ac4e0000000058734f94af871c3d131b56131b6fb7a0291eacadd261e69dfb42a9cdf6f7fddd00000005000000003b1926b0000000010000000000000000a8fb4b8493de3efc2b844cce494dcdb9c15166af021c8131a294743991f1ac4e0000000a0000000100000000000000000000000000093a81",
+    "txVerification": {
+      "network": "Flare Testnet Coston2",
+      "type": "updateAutoRenewedValidatorP",
+      "description": "Update auto-renewed validator on P-chain",
+      "recipients": [],
+      "values": [],
+      "fee": "1855392000000000",
+      "parameters": [
+        {
+          "name": "validatorTxId",
+          "value": "2HRQhukYEXSvyY3NfFqCerZuYKKYNQ8cVr1stRNaFHGsbf4VtF"
+        },
+        {
+          "name": "nodeId",
+          "value": "NodeID-NKqPQeBNRT82BSHjFT9hCygtYQQBSBST7"
+        },
+        {
+          "name": "period",
+          "value": "604801"
+        }
+      ],
+      "warnings": [
+        "Funds might not be transferred to the signer address."
+      ],
+      "messageToSign": "0xfeabed8020f4f4f6c7609e7c229b4cebd17e61600a17402113775faf0bfbed02"
+    }
+  },
+  {
+    "txHex": "0x0000000000290000007200000000000000000000000000000000000000000000000000000000000000000000000158734f94af871c3d131b56131b6fb7a0291eacadd261e69dfb42a9cdf6f7fddd00000007000000003ae0a2e400000000000000000000000100000001253a6c90f28b3ab14e3daeb01171526e8e44424700000001e5c5eee50fb26001f48feb7052240d06fd46e93ebd011f42fb3e390aeee2943f0000000058734f94af871c3d131b56131b6fb7a0291eacadd261e69dfb42a9cdf6f7fddd00000005000000003afcd710000000010000000000000000a8fb4b8493de3efc2b844cce494dcdb9c15166af021c8131a294743991f1ac4e0000000a0000000100000000000000000000000000000000",
+    "txVerification": {
+      "network": "Flare Testnet Coston2",
+      "type": "removeAutoRenewedValidatorP",
+      "description": "Remove auto-renewed validator on P-chain",
+      "recipients": [],
+      "values": [],
+      "fee": "1848364000000000",
+      "parameters": [
+        {
+          "name": "validatorTxId",
+          "value": "2HRQhukYEXSvyY3NfFqCerZuYKKYNQ8cVr1stRNaFHGsbf4VtF"
+        },
+        {
+          "name": "nodeId",
+          "value": "NodeID-NKqPQeBNRT82BSHjFT9hCygtYQQBSBST7"
+        },
+        {
+          "name": "period",
+          "value": "0"
+        }
+      ],
+      "warnings": [
+        "Funds might not be transferred to the signer address."
+      ],
+      "messageToSign": "0x301e8874b8ac2f745e61fc11e0fec553511045738c7fe965ee7f516c81f94bd0"
     }
   }
 ]

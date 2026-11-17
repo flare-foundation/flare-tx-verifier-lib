@@ -224,6 +224,17 @@ async function _tryGetPTxParams(tx: pvmSerial.BaseTx): Promise<TxVerification | 
     } else if (tx._type === TypeSymbols.AddValidatorTx) {
       type = txtype.ADD_VALIDATOR_P;
       params = await _getAddValidatorParams(tx as pvmSerial.AddValidatorTx, context, warnings);
+    } else if (tx._type === TypeSymbols.AddAutoRenewedValidatorTx) {
+      type = txtype.ADD_AUTO_RENEWED_VALIDATOR_P;
+      params = await _getAddAutoRenewedValidatorParams(tx as pvmSerial.AddAutoRenewedValidatorTx, context, warnings);
+    } else if (tx._type === TypeSymbols.SetAutoRenewedValidatorConfigTx) {
+      const stx = tx as pvmSerial.SetAutoRenewedValidatorConfigTx;
+      // A zero period ends the validation after the current validation period.
+      type =
+        stx.period.value() === BigInt(0)
+          ? txtype.REMOVE_AUTO_RENEWED_VALIDATOR_P
+          : txtype.UPDATE_AUTO_RENEWED_VALIDATOR_P;
+      params = await _getSetAutoRenewedValidatorParams(stx, context, warnings);
     } else if (tx._type === TypeSymbols.PvmExportTx) {
       type = txtype.EXPORT_P;
       params = await _getExportPTx(tx as pvmSerial.ExportTx, context, warnings);
@@ -299,6 +310,7 @@ async function _getStakeTxData(
 
   const [stakeoutRecipients, stakeoutAmounts] = _getPOutputsData(context, tx.stake, warnings);
   _compareRecipients(stakeoutRecipients, recipients, warnings);
+  await _checkFirstInputOwner(context, tx.baseTx.inputs, stakeoutRecipients, warnings);
 
   let validator: pvmSerial.Validator;
   if (tx instanceof pvmSerial.AddPermissionlessDelegatorTx || tx instanceof pvmSerial.AddPermissionlessValidatorTx) {
@@ -334,6 +346,131 @@ async function _getStakeTxData(
     fee: _gweiToWei(fee).toString(),
     parameters,
   };
+}
+
+async function _getAddAutoRenewedValidatorParams(
+  tx: pvmSerial.AddAutoRenewedValidatorTx,
+  context: Context.Context,
+  warnings: Set<string>
+): Promise<TxParams> {
+  const [recipients, receivedAmounts] = _getPOutputsData(context, tx.baseTx.outputs, warnings);
+
+  const sentAmount = await _getPInputsData(
+    context,
+    tx.baseTx.inputs,
+    recipients.length === 1 && !recipients[0].includes(",") ? [recipients[0]] : undefined,
+    undefined,
+    warnings
+  );
+
+  let stakeAmount = BigInt(0);
+  for (const output of tx.stake) {
+    stakeAmount += output.amount();
+  }
+
+  const fee = sentAmount - _sumValues(receivedAmounts) - stakeAmount;
+
+  const [stakeoutRecipients, stakeoutAmounts] = _getPOutputsData(context, tx.stake, warnings);
+  _compareRecipients(stakeoutRecipients, recipients, warnings);
+  await _checkFirstInputOwner(context, tx.baseTx.inputs, stakeoutRecipients, warnings);
+
+  // Rewards owners and auto-compounding are not reported: Flare pays no staking rewards
+  // on the P-chain (staking rewards are claimed on the C-chain).
+  const authority = tx.getValidatorAuthority();
+  if (authority.addrs.length !== 1) {
+    warnings.add(warning.MULTIPLE_SIGNERS);
+  }
+  const validatorAuthority = _addressesToString(authority.addrs, context.hrp);
+  if (stakeoutRecipients.length !== 1 || validatorAuthority !== stakeoutRecipients[0]) {
+    warnings.add(warning.VALIDATOR_AUTHORITY_NOT_TO_STAKE_OWNER);
+  }
+
+  const parameters: TxVerificationParameter[] = [];
+  parameters.push({
+    name: "nodeId",
+    value: tx.nodeId.toString(),
+  });
+  parameters.push({
+    name: "period",
+    value: tx.period.value().toString(),
+  });
+  parameters.push({
+    name: "delegationFee",
+    value: (tx.delegationShares.value() / 1e4).toString(),
+  });
+  parameters.push({
+    name: "validatorAuthority",
+    value: validatorAuthority,
+  });
+
+  return {
+    recipients: stakeoutRecipients,
+    values: stakeoutAmounts.map((a) => _gweiToWei(a).toString()),
+    fee: _gweiToWei(fee).toString(),
+    parameters,
+  };
+}
+
+async function _getSetAutoRenewedValidatorParams(
+  tx: pvmSerial.SetAutoRenewedValidatorConfigTx,
+  context: Context.Context,
+  warnings: Set<string>
+): Promise<TxParams> {
+  const [recipients, receivedAmounts] = _getPOutputsData(context, tx.baseTx.outputs, warnings);
+
+  const sentAmount = await _getPInputsData(
+    context,
+    tx.baseTx.inputs,
+    recipients.length === 1 && !recipients[0].includes(",") ? [recipients[0]] : undefined,
+    undefined,
+    warnings
+  );
+
+  const fee = sentAmount - _sumValues(receivedAmounts);
+
+  const validatorTxId = tx.txId.toString();
+  const parameters: TxVerificationParameter[] = [];
+  parameters.push({
+    name: "validatorTxId",
+    value: validatorTxId,
+  });
+  const validatorTx = await _getAutoRenewedValidatorTx(context, validatorTxId);
+  if (validatorTx == null) {
+    warnings.add(warning.VALIDATOR_NOT_FOUND);
+  } else {
+    parameters.push({
+      name: "nodeId",
+      value: validatorTx.nodeId.toString(),
+    });
+  }
+  parameters.push({
+    name: "period",
+    value: tx.period.value().toString(),
+  });
+
+  return {
+    recipients: [],
+    values: [],
+    fee: _gweiToWei(fee).toString(),
+    parameters,
+  };
+}
+
+async function _getAutoRenewedValidatorTx(
+  context: Context.Context,
+  txId: string
+): Promise<pvmSerial.AddAutoRenewedValidatorTx | null> {
+  const pvmApi = _getPVMApi(context.networkID);
+  if (pvmApi == null) {
+    return null;
+  }
+  try {
+    const signedTx = await pvmApi.getTx({ txID: txId });
+    const tx = signedTx.unsignedTx;
+    return tx instanceof pvmSerial.AddAutoRenewedValidatorTx ? tx : null;
+  } catch {
+    return null;
+  }
 }
 
 async function _getExportPTx(
@@ -419,6 +556,35 @@ async function _getTransferPTx(
     values: receivedAmounts.map((a) => _gweiToWei(a).toString()),
     fee: _gweiToWei(fee).toString(),
   };
+}
+
+/**
+ * Staking rewards are paid on the C-chain to the address bound to the owner of the UTXO spent by
+ * the first input (the stake's `inputAddress` when mirrored to the C-chain), not to the stake owner.
+ */
+async function _checkFirstInputOwner(
+  context: Context.Context,
+  inputs: ReadonlyArray<TransferableInput>,
+  stakeOwners: Array<string>,
+  warnings: Set<string>
+): Promise<void> {
+  if (inputs.length === 0) {
+    return;
+  }
+  if (stakeOwners.length !== 1) {
+    warnings.add(warning.REWARDS_NOT_TO_STAKE_OWNER);
+    return;
+  }
+  if (stakeOwners[0].includes(",")) {
+    // Multiple stake owner addresses are already reported by MULTIPLE_SIGNERS.
+    return;
+  }
+  const utxos = await _getPUTXOs(context, stakeOwners[0]);
+  const txId = inputs[0].utxoID.txID.toString();
+  const outputIdx = inputs[0].utxoID.outputIdx.value();
+  if (!utxos.find((u) => u.txId === txId && u.outputIdx === outputIdx)) {
+    warnings.add(warning.REWARDS_NOT_TO_STAKE_OWNER);
+  }
 }
 
 async function _getPInputsData(

@@ -10,3 +10,8 @@ export const UNKNOWN_SUBNET = "Transaction specifies an unknown subnet network."
 export const PROXY_CONTRACT =
   "The recipient address is a proxy contract. Transaction parameters are decoded based on its speculated implementation.";
 export const DEPRECATED_TX = "The transaction type is deprecated and may not be accepted by the network.";
+export const VALIDATOR_AUTHORITY_NOT_TO_STAKE_OWNER =
+  "Validator authority is assigned to an address other than the stake owner.";
+export const VALIDATOR_NOT_FOUND = "The validator to be updated could not be found.";
+export const REWARDS_NOT_TO_STAKE_OWNER =
+  "Staking rewards will be assigned to the owner of the first input, which is not the stake owner.";
