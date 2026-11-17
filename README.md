@@ -25,6 +25,16 @@ let verification = await verify(input)
 ```
 The parameter `input` is a base64 or hex encoded unsigned C-chain or P-chain transaction. For convenience, it can also be a base64 or hex encoded GZIP compression of the transaction.
 
+Transaction types and warning messages are exported as constants in the namespaces [`txtype`](src/txtype.ts) and [`warning`](src/warning.ts), so the output can be checked without hard-coding strings:
+```
+import { verify, txtype, warning } from "@flarenetwork/flare-tx-verifier-lib"
+
+let verification = await verify(input)
+if (verification?.type === txtype.CONTRACT_CALL_C) { ... }
+if (verification?.warnings.includes(warning.FUNDS_LOCKED)) { ... }
+```
+The namespace `txtype` also provides the functions `isKnownType(type)` and `getDescription(type)`.
+
 ## About verification process
 
 The output of the function `verify` applied to the unsigned transaction will include the following parameters (depending on the type of transaction):
