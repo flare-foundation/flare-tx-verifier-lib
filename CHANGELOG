@@ -8,41 +8,36 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
-- Verification of auto-renewed validator transactions (AddAutoRenewedValidatorTx and SetAutoRenewedValidatorConfigTx) with the transaction types addAutoRenewedValidatorP, updateAutoRenewedValidatorP and removeAutoRenewedValidatorP, and the staking parameters period, validatorAuthority and validatorTxId.
+- Verification of auto-renewed validator transactions.
 - Warning constants exported in the namespace warning.
-- Warnings ANYONE_CAN_SPEND, ANY_OWNER_CAN_SPEND and MULTIPLE_OWNERS_REQUIRED for transaction outputs that specify no owner, multiple owners any one of whom can spend them, and multiple owners several of whom must sign.
-- Warning REWARDS_NOT_TO_STAKE_OWNER when staking rewards will be assigned to the owner of the first input, which is not the stake owner.
-- Warnings VALIDATOR_AUTHORITY_NOT_TO_STAKE_OWNER and VALIDATOR_NOT_FOUND for auto-renewed validators.
-- Warnings SAFE_DELEGATE_CALL and SAFE_GAS_REFUND for Safe transactions that make a delegate call or pay a gas refund to another address.
-- Warning CONTRACT_CALL_NOT_DECODED when a contract call cannot be decoded.
+- Warnings for outputs that anyone or any one of multiple owners can spend, or that require multiple owners.
+- Warnings for staking rewards and auto-renewed validators.
+- Warnings for Safe delegate calls and gas refunds.
+- Warning for contract calls that cannot be decoded.
 
 ### Changed
 
-- Transaction type constants and the functions isKnownType and getDescription are exported in the namespace txtype instead of at the package root.
-- The package exports only its main entry point; imports of internal files are no longer possible.
-- Node.js 24 or later is required.
+- Transaction types exported in the namespace txtype.
+- Package exports only the main entry point.
+- Node.js 24 or later required.
 - Upgraded @flarenetwork/flarejs to version 5.2.0.
-- Contract calls whose arguments cannot be decoded return a verification with the warning CONTRACT_CALL_NOT_DECODED instead of null.
-- P-chain and atomic transactions followed by additional bytes return null; transactions are accepted unsigned or signed.
-- GZIP input larger than 1 MB after decompression returns null.
+- Contract calls with undecodable arguments return a warning instead of null.
+- Additional bytes after P-chain and atomic transactions are rejected.
+- GZIP input limited to 1 MB.
 - Network requests time out after 10 seconds.
-- Invalid entries in the lists of Flare contracts are skipped.
-- Node.js Buffer is no longer used.
 - Contract registry update.
 - Dependency updates.
 
 ### Removed
 
-- Warning MULTIPLE_SIGNERS ("One or more transaction outputs specify multiple signers."), replaced by ANYONE_CAN_SPEND, ANY_OWNER_CAN_SPEND and MULTIPLE_OWNERS_REQUIRED, and no longer returned for the validator authority.
+- Warning MULTIPLE_SIGNERS.
 
 ### Fixed
 
-- Export from P-chain to outputs with multiple owners or no owner returned null.
-- P-chain transactions with outputs that specify no owner returned null.
-- False warnings for addresses with more than 1024 UTXOs.
-- Proxy implementation addresses starting with a zero byte were not resolved.
-- False warning for imports to P-chain that spend P-chain funds.
-- An unreachable C-chain node caused indefinite connection retries after verification.
+- Null result for P-chain outputs with no owner, and for exports from P-chain to multiple owners.
+- False warnings for addresses with more than 1024 UTXOs and for imports to P-chain that spend P-chain funds.
+- Proxy addresses starting with a zero byte.
+- Indefinite retries when a C-chain node is unreachable.
 
 ## [1.4.0] - 2026-01-15
 
