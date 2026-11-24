@@ -7,6 +7,9 @@ export const IMPORT_P = "importP";
 export const TRANSFER_P = "transferP";
 export const ADD_DELEGATOR_P = "addDelegatorP";
 export const ADD_VALIDATOR_P = "addValidatorP";
+export const ADD_AUTO_RENEWED_VALIDATOR_P = "addAutoRenewedValidatorP";
+export const UPDATE_AUTO_RENEWED_VALIDATOR_P = "updateAutoRenewedValidatorP";
+export const REMOVE_AUTO_RENEWED_VALIDATOR_P = "removeAutoRenewedValidatorP";
 
 export function isKnownType(type: string): boolean {
   return [
@@ -19,6 +22,9 @@ export function isKnownType(type: string): boolean {
     TRANSFER_P,
     ADD_DELEGATOR_P,
     ADD_VALIDATOR_P,
+    ADD_AUTO_RENEWED_VALIDATOR_P,
+    UPDATE_AUTO_RENEWED_VALIDATOR_P,
+    REMOVE_AUTO_RENEWED_VALIDATOR_P,
   ].includes(type);
 }
 
@@ -50,6 +56,15 @@ export function getDescription(type: string): string {
     }
     case ADD_VALIDATOR_P: {
       return "Add validator on P-chain";
+    }
+    case ADD_AUTO_RENEWED_VALIDATOR_P: {
+      return "Add auto-renewed validator on P-chain";
+    }
+    case UPDATE_AUTO_RENEWED_VALIDATOR_P: {
+      return "Update auto-renewed validator on P-chain";
+    }
+    case REMOVE_AUTO_RENEWED_VALIDATOR_P: {
+      return "Remove auto-renewed validator on P-chain";
     }
     default: {
       return "Unknown transaction type";

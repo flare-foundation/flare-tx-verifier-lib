@@ -1,6 +1,5 @@
-import { Contract, ethers, Interface, JsonRpcProvider } from "ethers";
+import { Contract, ethers, Interface } from "ethers";
 import * as chain from "./chain";
-import * as settings from "../../settings";
 import * as utils from "../../utils";
 
 const EIP1167_CODE_PREFIX = "0x363d3d373d3d3d363d";
@@ -58,7 +57,6 @@ function _getEIP1167Target(code: string): string | null {
 }
 
 async function _getEIP2535Target(network: number, proxy: string, data: string): Promise<string | null> {
-  const provider = _getProvider(network);
   const loupe = new Contract(
     proxy,
     Interface.from([
@@ -82,7 +80,7 @@ async function _getEIP2535Target(network: number, proxy: string, data: string): 
         type: "function",
       },
     ]),
-    provider
+    chain.getProvider(network)
   );
   try {
     const address = await loupe.facetAddress(data.slice(0, 10));
@@ -152,9 +150,10 @@ async function _getAddressFromContractSlot(
   if (!contractCode.includes(contractSlot.slice(2))) {
     return null;
   }
-  const provider = _getProvider(network);
-  const address = await provider.getStorage(contractAddress, contractSlot);
-  return utils.isZeroHex(address) ? null : ethers.stripZerosLeft(address);
+  const value = await chain.getProvider(network).getStorage(contractAddress, contractSlot);
+  // An address occupies the lowest 20 bytes of the 32-byte slot.
+  const address = ethers.dataSlice(value, 12);
+  return utils.isZeroHex(address) ? null : ethers.getAddress(address);
 }
 
 async function _getAddressFromContractMethod(
@@ -184,7 +183,7 @@ async function _getAddressFromContractMethod(
         type: "function",
       },
     ]),
-    _getProvider(network)
+    chain.getProvider(network)
   );
 
   try {
@@ -193,8 +192,4 @@ async function _getAddressFromContractMethod(
   } catch {
     return null;
   }
-}
-
-function _getProvider(network: number): JsonRpcProvider {
-  return new JsonRpcProvider(settings.C_CHAIN_API_RPC[network]);
 }

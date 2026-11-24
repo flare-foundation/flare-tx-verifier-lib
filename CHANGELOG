@@ -4,6 +4,41 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [2.0.0] - 2026-11-18
+
+### Added
+
+- Verification of auto-renewed validator transactions.
+- Warning constants exported in the namespace warning.
+- Warnings for outputs that anyone or any one of multiple owners can spend, or that require multiple owners.
+- Warnings for staking rewards and auto-renewed validators.
+- Warnings for Safe delegate calls and gas refunds.
+- Warning for contract calls that cannot be decoded.
+
+### Changed
+
+- Transaction types exported in the namespace txtype.
+- Package exports only the main entry point.
+- Node.js 24 or later required.
+- Upgraded @flarenetwork/flarejs to version 5.2.0.
+- Contract calls with undecodable arguments return a warning instead of null.
+- Additional bytes after P-chain and atomic transactions are rejected.
+- GZIP input limited to 1 MB.
+- Network requests time out after 10 seconds.
+- Contract registry update.
+- Dependency updates.
+
+### Removed
+
+- Warning MULTIPLE_SIGNERS.
+
+### Fixed
+
+- Null result for P-chain outputs with no owner, and for exports from P-chain to multiple owners.
+- False warnings for addresses with more than 1024 UTXOs and for imports to P-chain that spend P-chain funds.
+- Proxy addresses starting with a zero byte.
+- Indefinite retries when a C-chain node is unreachable.
+
 ## [1.4.0] - 2026-01-15
 
 ### Added

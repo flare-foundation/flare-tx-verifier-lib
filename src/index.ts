@@ -4,7 +4,8 @@ import { verify as verifyAvax } from "./avax";
 import * as utils from "./utils";
 
 export * from "./interface";
-export * from "./txtype";
+export * as txtype from "./txtype";
+export * as warning from "./warning";
 
 export async function verify(input: string): Promise<TxVerification | null> {
   const txHex = await _tryConvertToTxHex(input);
@@ -40,7 +41,9 @@ async function _tryConvertToTxHex(input: string): Promise<string | null> {
   if (utils.isGZipped(input)) {
     try {
       input = await utils.decompressGZip(input);
-    } catch {}
+    } catch {
+      return null;
+    }
   }
   return input;
 }

@@ -2,9 +2,14 @@ import * as txnetwork from "../txnetwork";
 import * as txtype from "../txtype";
 import * as utils from "../utils";
 import * as warning from "../warning";
-import { Transaction } from "ethers";
+import { type Interface, type TransactionDescription, Transaction, ZeroAddress } from "ethers";
 import { getContractData, getProxyTarget, isContract, isFlareContract } from "./contract";
 import type { SafeTxData, TxVerification, TxVerificationParameter } from "../interface";
+
+type ContractParams = Pick<
+  TxVerification,
+  "contractName" | "contractMethod" | "contractMethodABI" | "contractData" | "isFlareNetworkContract" | "parameters"
+>;
 
 export async function verify(txHex: string): Promise<TxVerification | null> {
   let tx: Transaction;
@@ -44,7 +49,7 @@ export async function verify(txHex: string): Promise<TxVerification | null> {
 function _getNetwork(tx: Transaction, warnings: Set<string>): string {
   const chainId = Number(tx.chainId);
   if (!txnetwork.isKnownCChainNetwork(chainId)) {
-    warnings.add(warning.UNKOWN_NETWORK);
+    warnings.add(warning.UNKNOWN_NETWORK);
   }
   return txnetwork.getCChainNetworkDescription(chainId);
 }
@@ -61,7 +66,7 @@ async function _isRecipientFlrNetContract(tx: Transaction): Promise<boolean> {
   if (!txnetwork.isKnownCChainNetwork(chainId)) {
     return false;
   }
-  return await isFlareContract(chainId, tx.to!);
+  return await isFlareContract(chainId, tx.to);
 }
 
 async function _getType(tx: Transaction, isRecipientFlrNetContract: boolean): Promise<string> {
@@ -111,7 +116,7 @@ async function _getContract(
   type: string,
   isRecipientFlrNetContract: boolean,
   warnings: Set<string>
-): Promise<any> {
+): Promise<ContractParams> {
   if (type !== txtype.CONTRACT_CALL_C) {
     return {};
   }
@@ -119,20 +124,19 @@ async function _getContract(
   let contractName: string | undefined;
   let contractMethod: string | undefined;
   let contractMethodABI: string | undefined;
-  let contractData: string | undefined;
   let isFlareNetworkContract: boolean | undefined;
   let parameters: Array<TxVerificationParameter> | undefined;
 
   const chainId = Number(tx.chainId);
 
-  contractData = tx.data;
+  const contractData = tx.data;
   isFlareNetworkContract = isRecipientFlrNetContract;
   if (tx.to != null && txnetwork.isKnownCChainNetwork(chainId)) {
-    let contract = await getContractData(chainId, tx.to!);
+    let contract = await getContractData(chainId, tx.to);
 
     let decodingWithProxyTarget = false;
     if (contract == null) {
-      const proxyTargetAddress = await getProxyTarget(chainId, tx.to!, tx.data);
+      const proxyTargetAddress = await getProxyTarget(chainId, tx.to, tx.data);
       if (proxyTargetAddress) {
         contract = await getContractData(chainId, proxyTargetAddress);
         decodingWithProxyTarget = true;
@@ -142,14 +146,14 @@ async function _getContract(
     if (contract) {
       contractName = contract.name;
       const txData = { data: tx.data, value: tx.value };
-      let description = contract.interface.parseTransaction(txData);
+      let description = _parseTransaction(contract.interface, txData);
 
       if (description == null && !decodingWithProxyTarget) {
-        const proxyTargetAddress = await getProxyTarget(chainId, tx.to!, tx.data);
+        const proxyTargetAddress = await getProxyTarget(chainId, tx.to, tx.data);
         if (proxyTargetAddress) {
           const proxyTarget = await getContractData(chainId, proxyTargetAddress);
           if (proxyTarget != null) {
-            description = proxyTarget.interface.parseTransaction(txData);
+            description = _parseTransaction(proxyTarget.interface, txData);
             decodingWithProxyTarget = true;
           }
         }
@@ -171,6 +175,11 @@ async function _getContract(
         }
       }
     }
+
+    // Empty data sends funds to the contract without calling a method.
+    if (contractMethod === undefined && tx.data !== "0x") {
+      warnings.add(warning.CONTRACT_CALL_NOT_DECODED);
+    }
   }
 
   return {
@@ -181,6 +190,20 @@ async function _getContract(
     isFlareNetworkContract,
     parameters,
   };
+}
+
+/**
+ * Returns null if the method is not in the interface or its arguments cannot be decoded.
+ */
+function _parseTransaction(
+  contractInterface: Interface,
+  txData: { data: string; value: bigint }
+): TransactionDescription | null {
+  try {
+    return contractInterface.parseTransaction(txData);
+  } catch {
+    return null;
+  }
 }
 
 async function _getSafeTxData(
@@ -205,6 +228,16 @@ async function _getSafeTxData(
     )
   ) {
     return undefined;
+  }
+  const parameter = (name: string) => sourceParameters.find((p) => p.name === name).value;
+  // Operation 1 is a delegate call: the Safe runs the target's code in its own context.
+  if (parameter("operation") === "1") {
+    warnings.add(warning.SAFE_DELEGATE_CALL);
+  }
+  // With a non-zero gas price the Safe refunds gas from its own funds, to the refund receiver
+  // or, if that is the zero address, to the account submitting the transaction.
+  if (parameter("gasPrice") !== "0" && parameter("refundReceiver").toLowerCase() !== ZeroAddress) {
+    warnings.add(warning.SAFE_GAS_REFUND);
   }
   const to = pto.value;
   const data = pdata.value;

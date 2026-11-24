@@ -1,3 +1,6 @@
+// Maximum time for a single network request.
+export const REQUEST_TIMEOUT_MS = 10000;
+
 type NetworkId = {
   [key: number]: string;
 };
@@ -14,13 +17,6 @@ export const P_CHAIN_API: NetworkId = {
   7: "https://coston-api.flare.network/ext/bc/P",
   14: "https://flare-api.flare.network/ext/bc/P",
   114: "https://coston2-api.flare.network/ext/bc/P",
-};
-
-export const FLARE_CONTRACT_REGISTRY: NetworkId = {
-  14: "0xad67fe66660fb8dfe9d6b1b4240d8650e30f6019",
-  16: "0xad67fe66660fb8dfe9d6b1b4240d8650e30f6019",
-  19: "0xad67fe66660fb8dfe9d6b1b4240d8650e30f6019",
-  114: "0xad67fe66660fb8dfe9d6b1b4240d8650e30f6019",
 };
 
 export const EXPLORER: NetworkId = {

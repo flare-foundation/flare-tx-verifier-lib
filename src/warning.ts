@@ -1,12 +1,26 @@
-export const UNKOWN_NETWORK = "Transaction to unknown network. The data may be inaccurate or incomplete.";
+export const UNKNOWN_NETWORK = "Transaction to unknown network. The data may be inaccurate or incomplete.";
 export const FUNDS_LOCKED = "Funds will be locked after transfer.";
 export const MULTIPLE_RECIPIENTS = "Multiple recipient addresses.";
-export const MULTIPLE_SIGNERS = "One or more transaction outputs specify multiple signers.";
+export const ANYONE_CAN_SPEND = "One or more transaction outputs specify no owner, so anyone can spend them.";
+export const ANY_OWNER_CAN_SPEND =
+  "One or more transaction outputs specify multiple owners, and any one of them can spend the funds alone.";
+export const MULTIPLE_OWNERS_REQUIRED =
+  "One or more transaction outputs specify multiple owners, and several of them must sign to spend the funds.";
 export const FUNDS_NOT_RETURNED = "Funds might not be transferred to the signer address.";
 export const UNSPENT_AMOUNT_NOT_TO_RECIPIENT = "Unspent amount is not transferred to the recipient.";
 export const INVALID_BLOCKCHAIN = "Transaction specifies an invalid blockchain.";
 export const INVALID_ASSET = "Transaction specifies an invalid asset.";
 export const UNKNOWN_SUBNET = "Transaction specifies an unknown subnet network.";
+export const CONTRACT_CALL_NOT_DECODED =
+  "The contract call could not be decoded, so the called method and its parameters cannot be verified.";
 export const PROXY_CONTRACT =
   "The recipient address is a proxy contract. Transaction parameters are decoded based on its speculated implementation.";
 export const DEPRECATED_TX = "The transaction type is deprecated and may not be accepted by the network.";
+export const VALIDATOR_AUTHORITY_NOT_TO_STAKE_OWNER =
+  "Validator authority is assigned to an address other than the stake owner.";
+export const VALIDATOR_NOT_FOUND = "The validator to be updated could not be found.";
+export const REWARDS_NOT_TO_STAKE_OWNER =
+  "Staking rewards will be assigned to the owner of the first input, which is not the stake owner.";
+export const SAFE_DELEGATE_CALL =
+  "The smart account executes the called contract's code as its own (delegate call), giving that code full control over the account's assets and settings.";
+export const SAFE_GAS_REFUND = "The smart account pays a gas refund from its own funds to another address.";

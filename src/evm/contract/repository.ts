@@ -1,3 +1,4 @@
+import * as settings from "../../settings";
 import * as txnetwork from "../../txnetwork";
 
 const FLARE_SMART_CONTRACTS_V1_URL =
@@ -19,26 +20,43 @@ export async function getAddressesOfFlareFassetContracts(network: number): Promi
   return _getAddresses(network, FLARE_FASSET_CONTRACTS_URL);
 }
 
+const ADDRESS_PATTERN = /^0x[0-9a-fA-F]{40}$/;
+
+/**
+ * Returns the addresses listed in a deployment file. Each entry has an `address` or an `addresses` list;
+ * entries and values of another form are skipped.
+ */
 async function _getAddresses(network: number, baseUrl: string): Promise<Array<string>> {
-  const contracts = await _get(network, baseUrl);
-  if (contracts.every((c) => "addresses" in c)) {
-    return contracts.flatMap((c) => c.addresses);
+  const addresses: string[] = [];
+  for (const contract of await _get(network, baseUrl)) {
+    if (contract == null || typeof contract !== "object") {
+      continue;
+    }
+    const values: unknown[] = Array.isArray(contract.addresses) ? contract.addresses : [contract.address];
+    for (const value of values) {
+      if (typeof value === "string" && ADDRESS_PATTERN.test(value)) {
+        addresses.push(value);
+      }
+    }
   }
-  if (contracts.every((c) => "address" in c)) {
-    return contracts.map((c) => c.address);
-  }
-  return [];
+  return addresses;
 }
 
-async function _get(network: number, baseUrl: string): Promise<Array<any>> {
+/**
+ * Returns the entries of a deployment file, or an empty list if it cannot be downloaded or is not a list.
+ */
+async function _get(network: number, baseUrl: string): Promise<Array<Record<string, unknown>>> {
   const url = _getJsonUrl(network, baseUrl);
   if (url == null) {
     return [];
   }
   try {
-    const data = await fetch(url);
-    const response = await data.json();
-    return response;
+    const data = await fetch(url, { signal: AbortSignal.timeout(settings.REQUEST_TIMEOUT_MS) });
+    if (!data.ok) {
+      return [];
+    }
+    const response: unknown = await data.json();
+    return Array.isArray(response) ? response : [];
   } catch {
     return [];
   }

@@ -73,6 +73,50 @@
     }
   },
   {
+    "txHex": "0x02f84c72358459682f00850bfda3a30082abf89433913ace907f682e305f36d7538d3ccd37e2ca5b80a4b2c121920000000000000000000000008ab7028638854ae968ef5174996c17d010af4bd5c0",
+    "txVerification": {
+      "network": "Flare Testnet Coston2",
+      "type": "contractCallC",
+      "description": "Contract call on C-chain",
+      "recipients": [
+        "0x33913AcE907F682E305f36d7538D3cCd37E2cA5B"
+      ],
+      "values": [
+        "0"
+      ],
+      "fee": "2267236000000000",
+      "contractName": "ValidatorRewardManager",
+      "contractData": "0xb2c121920000000000000000000000008ab7028638854ae968ef5174996c17d010af4bd5",
+      "isFlareNetworkContract": true,
+      "warnings": [
+        "The contract call could not be decoded, so the called method and its parameters cannot be verified."
+      ],
+      "messageToSign": "0xa0315f5e3f80f3a40bb25bca24018edd3444076ed5ea91627004ac7d0cbdfa7e"
+    }
+  },
+  {
+    "txHex": "0x02f8ad72358459682f00850bfda3a30082abf89433913ace907f682e305f36d7538d3ccd37e2ca5b80b884deadbeef0000000000000000000000008ab7028638854ae968ef5174996c17d010af4bd50000000000000000000000008ab7028638854ae968ef5174996c17d010af4bd500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c0",
+    "txVerification": {
+      "network": "Flare Testnet Coston2",
+      "type": "contractCallC",
+      "description": "Contract call on C-chain",
+      "recipients": [
+        "0x33913AcE907F682E305f36d7538D3cCd37E2cA5B"
+      ],
+      "values": [
+        "0"
+      ],
+      "fee": "2267236000000000",
+      "contractName": "ValidatorRewardManager",
+      "contractData": "0xdeadbeef0000000000000000000000008ab7028638854ae968ef5174996c17d010af4bd50000000000000000000000008ab7028638854ae968ef5174996c17d010af4bd500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "isFlareNetworkContract": true,
+      "warnings": [
+        "The contract call could not be decoded, so the called method and its parameters cannot be verified."
+      ],
+      "messageToSign": "0xe2e77760c8746a270f50824396a87f88f9bcd16c1d50a0d178f7b7b017a51df1"
+    }
+  },
+  {
     "txHex": "0x01f8a90e67851bbef8d75a830529b39485627d71921ae25769f5370e482ada5e1e418d3780b884b2c1219200000000000000000000000076f95a6fce19f21845e56e39cd08e6b39bd5644f00000000000000000000000076f95a6fce19f21845e56e39cd08e6b39bd5644f00000000000000000000000000000000000000000000000000000000000000970000000000000000000000000000000000000000000000000000000000000001c0",
     "txVerification": {
       "network": "Flare Mainnet",
@@ -405,6 +449,29 @@
     }
   },
   {
+    "txHex": "0x0000000000010000007278db5c30bed04c05ce209179812850bbb3fe6d46d7eef3744d814c0da55524790000000000000000000000000000000000000000000000000000000000000000000000018ab7028638854ae968ef5174996c17d010af4bd5000000003bae54ee58734f94af871c3d131b56131b6fb7a0291eacadd261e69dfb42a9cdf6f7fddd00000000000000310000000158734f94af871c3d131b56131b6fb7a0291eacadd261e69dfb42a9cdf6f7fddd00000007000000003baa0c4000000000000000000000000000000000",
+    "txVerification": {
+      "network": "Flare Testnet Coston2",
+      "type": "exportC",
+      "description": "Export from C-chain",
+      "recipients": [
+        ""
+      ],
+      "values": [
+        "1001000000000000000"
+      ],
+      "fee": "280750000000000",
+      "warnings": [
+        "One or more transaction outputs specify no owner, so anyone can spend them."
+      ],
+      "messageToSign": "0x2e92287368af7ea12b6303b20c273ccc7d450cccf53ad48cfbba5025be1a1e04"
+    }
+  },
+  {
+    "txHex": "0x0000000000010000007278db5c30bed04c05ce209179812850bbb3fe6d46d7eef3744d814c0da55524790000000000000000000000000000000000000000000000000000000000000000000000018ab7028638854ae968ef5174996c17d010af4bd5000000003bae54ee58734f94af871c3d131b56131b6fb7a0291eacadd261e69dfb42a9cdf6f7fddd00000000000000310000000158734f94af871c3d131b56131b6fb7a0291eacadd261e69dfb42a9cdf6f7fddd00000007000000003baa0c4000000000000000000000000100000001237605140994862f6bd6f3a3740ee6f586bbdaffdeadbeef",
+    "txVerification": null
+  },
+  {
     "txHex": "0x0000000000110000007200000000000000000000000000000000000000000000000000000000000000000000000158734f94af871c3d131b56131b6fb7a0291eacadd261e69dfb42a9cdf6f7fddd000000070000000005e548ef0000000000000000000000010000000121ecb223daf5bec57c88276a3086c7aeb88035cb000000000000000078db5c30bed04c05ce209179812850bbb3fe6d46d7eef3744d814c0da555247900000001efad0a2519283bd33aa9dbfae2692b2a8bf03a37bced7317e40728d011451fb00000000058734f94af871c3d131b56131b6fb7a0291eacadd261e69dfb42a9cdf6f7fddd000000050000000005f5e1000000000100000000",
     "txVerification": {
       "network": "Flare Testnet Coston2",
@@ -476,6 +543,26 @@
         "Funds might not be transferred to the signer address."
       ],
       "messageToSign": "0xc90366cfc8517c438a14d15750983eba8ba4a3b49d187b2b8ce729e75d2cfb2e"
+    }
+  },
+  {
+    "txHex": "0x0000000000120000007200000000000000000000000000000000000000000000000000000000000000000000000158734f94af871c3d131b56131b6fb7a0291eacadd261e69dfb42a9cdf6f7fddd000000070000000005d51170000000000000000000000001000000013228208ad949be9a337812e3808a857903239df30000000200bed2d4ba1b9a6471d4520fa59027355a8a61e4e41ea04e446a7b13d22137ea0000000258734f94af871c3d131b56131b6fb7a0291eacadd261e69dfb42a9cdf6f7fddd00000005000000003a5a5ac0000000010000000015566f01006d514c458936c04b4c1028c0793f508da35b3cacf263b9fd696c5c0000000058734f94af871c3d131b56131b6fb7a0291eacadd261e69dfb42a9cdf6f7fddd00000005000000003b9aca0000000001000000000000000078db5c30bed04c05ce209179812850bbb3fe6d46d7eef3744d814c0da55524790000000158734f94af871c3d131b56131b6fb7a0291eacadd261e69dfb42a9cdf6f7fddd00000007000000006fff43c0000000000000000000000001000000023228208ad949be9a337812e3808a857903239df3ffffffffffffffffffffffffffffffffffffffff",
+    "txVerification": {
+      "network": "Flare Testnet Coston2",
+      "type": "exportP",
+      "description": "Export from P-chain",
+      "recipients": [
+        "costwo1llllllllllllllllllllllllllllllll9456ge, costwo1xg5zpzkefxlf5vmczt3cpz590ypj880n349dnn"
+      ],
+      "values": [
+        "1879000000000000000"
+      ],
+      "fee": "2150288000000000",
+      "warnings": [
+        "One or more transaction outputs specify multiple owners, and any one of them can spend the funds alone.",
+        "Unspent amount is not transferred to the recipient."
+      ],
+      "messageToSign": "0xef790a349758abebf3c59ca1e4b03e189ad0953581a6bdba0182fce96eae6e0f"
     }
   },
   {
@@ -557,6 +644,52 @@
     }
   },
   {
+    "txHex": "0x0000000000220000007200000000000000000000000000000000000000000000000000000000000000000000000258734f94af871c3d131b56131b6fb7a0291eacadd261e69dfb42a9cdf6f7fddd0000000700000000009896800000000000000000000000000000000058734f94af871c3d131b56131b6fb7a0291eacadd261e69dfb42a9cdf6f7fddd00000007000000003aed6ae3000000000000000000000001000000013228208ad949be9a337812e3808a857903239df30000000115566f01006d514c458936c04b4c1028c0793f508da35b3cacf263b9fd696c5c0000000058734f94af871c3d131b56131b6fb7a0291eacadd261e69dfb42a9cdf6f7fddd00000005000000003b9aca00000000010000000000000000",
+    "txVerification": {
+      "network": "Flare Testnet Coston2",
+      "type": "transferP",
+      "description": "Funds transfer on P-chain",
+      "recipients": [
+        "",
+        "costwo1xg5zpzkefxlf5vmczt3cpz590ypj880n349dnn"
+      ],
+      "values": [
+        "10000000000000000",
+        "988637923000000000"
+      ],
+      "fee": "1362077000000000",
+      "warnings": [
+        "One or more transaction outputs specify no owner, so anyone can spend them."
+      ],
+      "messageToSign": "0x80a04867c9abd5d46069f318e2e3b2985037c43307f8bcce5ded7d69ae09d809"
+    }
+  },
+  {
+    "txHex": "0x0000000000220000007200000000000000000000000000000000000000000000000000000000000000000000000258734f94af871c3d131b56131b6fb7a0291eacadd261e69dfb42a9cdf6f7fddd00000007000000000098968000000000000000000000000200000002e82db275bf45d4a1fc48b1b05df9f758b9f10f40ffffffffffffffffffffffffffffffffffffffff58734f94af871c3d131b56131b6fb7a0291eacadd261e69dfb42a9cdf6f7fddd00000007000000003aed6ae3000000000000000000000001000000013228208ad949be9a337812e3808a857903239df30000000115566f01006d514c458936c04b4c1028c0793f508da35b3cacf263b9fd696c5c0000000058734f94af871c3d131b56131b6fb7a0291eacadd261e69dfb42a9cdf6f7fddd00000005000000003b9aca00000000010000000000000000",
+    "txVerification": {
+      "network": "Flare Testnet Coston2",
+      "type": "transferP",
+      "description": "Funds transfer on P-chain",
+      "recipients": [
+        "costwo1aqkmyadlgh22rlzgkxc9m70htzulzr6qwa98m3, costwo1llllllllllllllllllllllllllllllll9456ge",
+        "costwo1xg5zpzkefxlf5vmczt3cpz590ypj880n349dnn"
+      ],
+      "values": [
+        "10000000000000000",
+        "988637923000000000"
+      ],
+      "fee": "1362077000000000",
+      "warnings": [
+        "One or more transaction outputs specify multiple owners, and several of them must sign to spend the funds."
+      ],
+      "messageToSign": "0xad8b3902c1a92c8163292d68d0ce9590a36cc762c4c355b49949f547f3b07017"
+    }
+  },
+  {
+    "txHex": "0x0000000000220000007200000000000000000000000000000000000000000000000000000000000000000000000258734f94af871c3d131b56131b6fb7a0291eacadd261e69dfb42a9cdf6f7fddd00000007000000000098968000000000000000000000000100000001e82db275bf45d4a1fc48b1b05df9f758b9f10f4058734f94af871c3d131b56131b6fb7a0291eacadd261e69dfb42a9cdf6f7fddd00000007000000003aed6ae3000000000000000000000001000000013228208ad949be9a337812e3808a857903239df30000000115566f01006d514c458936c04b4c1028c0793f508da35b3cacf263b9fd696c5c0000000058734f94af871c3d131b56131b6fb7a0291eacadd261e69dfb42a9cdf6f7fddd00000005000000003b9aca00000000010000000000000000deadbeef",
+    "txVerification": null
+  },
+  {
     "txHex": "0x00000000001a0000007200000000000000000000000000000000000000000000000000000000000000000000000158734f94af871c3d131b56131b6fb7a0291eacadd261e69dfb42a9cdf6f7fddd000000070000000005b8190b0000000000000000000000010000000121ecb223daf5bec57c88276a3086c7aeb88035cb00000002218888e1cfc80dae4ebca2c9a01037e732867538f271d7666645ee76322ea87e0000000058734f94af871c3d131b56131b6fb7a0291eacadd261e69dfb42a9cdf6f7fddd0000000500002d79883d20000000000100000000ef40610155fd479d77168edf1be8db4170a1da897fca7958ac5ba7cf29659ef20000000058734f94af871c3d131b56131b6fb7a0291eacadd261e69dfb42a9cdf6f7fddd000000050000000005e548ef000000010000000000000000664b4924a25af8be5f07052b2c2e582f7c10a654000000006917a90f00000000692a1e0f00002d79883d200000000000000000000000000000000000000000000000000000000000000000000000000158734f94af871c3d131b56131b6fb7a0291eacadd261e69dfb42a9cdf6f7fddd0000000700002d79883d20000000000000000000000000010000000121ecb223daf5bec57c88276a3086c7aeb88035cb0000000b0000000000000000000000010000000121ecb223daf5bec57c88276a3086c7aeb88035cb",
     "txVerification": {
       "network": "Flare Testnet Coston2",
@@ -584,7 +717,8 @@
         }
       ],
       "warnings": [
-        "Funds might not be transferred to the signer address."
+        "Funds might not be transferred to the signer address.",
+        "Staking rewards will be assigned to the owner of the first input, which is not the stake owner."
       ],
       "messageToSign": "0xe1e347fa2e073f130005380e031f86b8be5f8d6bd9b3eac1b41d7b8ee547c07f"
     }
@@ -616,7 +750,9 @@
           "value": "1750060701"
         }
       ],
-      "warnings": [],
+      "warnings": [
+        "Staking rewards will be assigned to the owner of the first input, which is not the stake owner."
+      ],
       "messageToSign": "0xa2cfc2b416051519a9650472722c494632d2adae0bf6562fecd83a76358ab7f3"
     }
   },
@@ -648,7 +784,8 @@
         }
       ],
       "warnings": [
-        "Funds might not be transferred to the signer address."
+        "Funds might not be transferred to the signer address.",
+        "Staking rewards will be assigned to the owner of the first input, which is not the stake owner."
       ],
       "messageToSign": "0xae417fccbe77db5864a7aeb283b501da09fcbd889f690e779d50d7b46fa26e5b"
     }
@@ -681,7 +818,8 @@
         }
       ],
       "warnings": [
-        "The transaction type is deprecated and may not be accepted by the network."
+        "The transaction type is deprecated and may not be accepted by the network.",
+        "Staking rewards will be assigned to the owner of the first input, which is not the stake owner."
       ],
       "messageToSign": "0x1f936eed3578b16b6ea4b59d745516d68452d41bdf19b3c0e7499a2d2a7a01c3"
     }
@@ -718,7 +856,8 @@
         }
       ],
       "warnings": [
-        "Funds might not be transferred to the signer address."
+        "Funds might not be transferred to the signer address.",
+        "Staking rewards will be assigned to the owner of the first input, which is not the stake owner."
       ],
       "messageToSign": "0x287dac3fd9fc12b27f9d91a7706d692740998016e78bdbe3710afe39bf818d83"
     }
@@ -755,7 +894,8 @@
         }
       ],
       "warnings": [
-        "Funds might not be transferred to the signer address."
+        "Funds might not be transferred to the signer address.",
+        "Staking rewards will be assigned to the owner of the first input, which is not the stake owner."
       ],
       "messageToSign": "0xba12413f075e323541cf8d3257e2569ecf1a312fbc1ad89771c01a1e93f90fb0"
     }
@@ -793,9 +933,106 @@
       ],
       "warnings": [
         "The transaction type is deprecated and may not be accepted by the network.",
-        "Funds might not be transferred to the signer address."
+        "Funds might not be transferred to the signer address.",
+        "Staking rewards will be assigned to the owner of the first input, which is not the stake owner."
       ],
       "messageToSign": "0x1adb8afa07ef1da716f10fc3c3fde216d96ceb027c81b84795f1ce8560e88092"
+    }
+  },
+  {
+    "txHex": "0x0000000000280000007200000000000000000000000000000000000000000000000000000000000000000000000158734f94af871c3d131b56131b6fb7a0291eacadd261e69dfb42a9cdf6f7fddd00000007000000003b1926b000000000000000000000000100000001253a6c90f28b3ab14e3daeb01171526e8e44424700000002103c9e5a4368df1567ca8c486a2a497c9168d0e18cb5549db90f688c45d002910000000058734f94af871c3d131b56131b6fb7a0291eacadd261e69dfb42a9cdf6f7fddd00000005000000003b57f6ac0000000100000000103c9e5a4368df1567ca8c486a2a497c9168d0e18cb5549db90f688c45d002910000000158734f94af871c3d131b56131b6fb7a0291eacadd261e69dfb42a9cdf6f7fddd0000000500038d7ea4c6800000000001000000000000000000000014e9ea8507f0f70a47f0a60ab124ed17fe0a5706d50000001c88e29d5ccb491dfffe42c39174973d5ebe9ec54cc1cf84c2594aa1a36db2bc443c60715b2838e55131e5eed41317a1ce815170240c4838366fdaa22667d3f1ad9b73063b2d15720c5188e7908631459851f2489a0101d77833898fd69d2107ab124ffdae8e147c5410d388b0cd26dd34cea8f52d0bc7be33aa5c2b587c658fd88dc0cca6f2c5e6e8b2901f7870c5f87b0000000158734f94af871c3d131b56131b6fb7a0291eacadd261e69dfb42a9cdf6f7fddd0000000700038d7ea4c6800000000000000000000000000100000001253a6c90f28b3ab14e3daeb01171526e8e4442470000000b00000000000000000000000100000001253a6c90f28b3ab14e3daeb01171526e8e4442470000000b00000000000000000000000100000001253a6c90f28b3ab14e3daeb01171526e8e4442470000000b00000000000000000000000100000001253a6c90f28b3ab14e3daeb01171526e8e44424700030d40000000000000000000093a80",
+    "txVerification": {
+      "network": "Flare Testnet Coston2",
+      "type": "addAutoRenewedValidatorP",
+      "description": "Add auto-renewed validator on P-chain",
+      "recipients": [
+        "costwo1y5axey8j3vatzn3a46cpzu2jd68ygsj84m5l59"
+      ],
+      "values": [
+        "1000000000000000000000000"
+      ],
+      "fee": "4116476000000000",
+      "parameters": [
+        {
+          "name": "nodeId",
+          "value": "NodeID-NKqPQeBNRT82BSHjFT9hCygtYQQBSBST7"
+        },
+        {
+          "name": "period",
+          "value": "604800"
+        },
+        {
+          "name": "delegationFee",
+          "value": "20"
+        },
+        {
+          "name": "validatorAuthority",
+          "value": "costwo1y5axey8j3vatzn3a46cpzu2jd68ygsj84m5l59"
+        }
+      ],
+      "warnings": [
+        "Funds might not be transferred to the signer address.",
+        "Staking rewards will be assigned to the owner of the first input, which is not the stake owner."
+      ],
+      "messageToSign": "0x5e0c1abc97a6669e44309b89ff1063154ba30f0d09cf61a0f67bd8b8a5770f2d"
+    }
+  },
+  {
+    "txHex": "0x0000000000290000007200000000000000000000000000000000000000000000000000000000000000000000000158734f94af871c3d131b56131b6fb7a0291eacadd261e69dfb42a9cdf6f7fddd00000007000000003afcd71000000000000000000000000100000001253a6c90f28b3ab14e3daeb01171526e8e44424700000001a8fb4b8493de3efc2b844cce494dcdb9c15166af021c8131a294743991f1ac4e0000000058734f94af871c3d131b56131b6fb7a0291eacadd261e69dfb42a9cdf6f7fddd00000005000000003b1926b0000000010000000000000000a8fb4b8493de3efc2b844cce494dcdb9c15166af021c8131a294743991f1ac4e0000000a0000000100000000000000000000000000093a81",
+    "txVerification": {
+      "network": "Flare Testnet Coston2",
+      "type": "updateAutoRenewedValidatorP",
+      "description": "Update auto-renewed validator on P-chain",
+      "recipients": [],
+      "values": [],
+      "fee": "1855392000000000",
+      "parameters": [
+        {
+          "name": "validatorTxId",
+          "value": "2HRQhukYEXSvyY3NfFqCerZuYKKYNQ8cVr1stRNaFHGsbf4VtF"
+        },
+        {
+          "name": "nodeId",
+          "value": "NodeID-NKqPQeBNRT82BSHjFT9hCygtYQQBSBST7"
+        },
+        {
+          "name": "period",
+          "value": "604801"
+        }
+      ],
+      "warnings": [
+        "Funds might not be transferred to the signer address."
+      ],
+      "messageToSign": "0xfeabed8020f4f4f6c7609e7c229b4cebd17e61600a17402113775faf0bfbed02"
+    }
+  },
+  {
+    "txHex": "0x0000000000290000007200000000000000000000000000000000000000000000000000000000000000000000000158734f94af871c3d131b56131b6fb7a0291eacadd261e69dfb42a9cdf6f7fddd00000007000000003ae0a2e400000000000000000000000100000001253a6c90f28b3ab14e3daeb01171526e8e44424700000001e5c5eee50fb26001f48feb7052240d06fd46e93ebd011f42fb3e390aeee2943f0000000058734f94af871c3d131b56131b6fb7a0291eacadd261e69dfb42a9cdf6f7fddd00000005000000003afcd710000000010000000000000000a8fb4b8493de3efc2b844cce494dcdb9c15166af021c8131a294743991f1ac4e0000000a0000000100000000000000000000000000000000",
+    "txVerification": {
+      "network": "Flare Testnet Coston2",
+      "type": "removeAutoRenewedValidatorP",
+      "description": "Remove auto-renewed validator on P-chain",
+      "recipients": [],
+      "values": [],
+      "fee": "1848364000000000",
+      "parameters": [
+        {
+          "name": "validatorTxId",
+          "value": "2HRQhukYEXSvyY3NfFqCerZuYKKYNQ8cVr1stRNaFHGsbf4VtF"
+        },
+        {
+          "name": "nodeId",
+          "value": "NodeID-NKqPQeBNRT82BSHjFT9hCygtYQQBSBST7"
+        },
+        {
+          "name": "period",
+          "value": "0"
+        }
+      ],
+      "warnings": [
+        "Funds might not be transferred to the signer address."
+      ],
+      "messageToSign": "0x301e8874b8ac2f745e61fc11e0fec553511045738c7fe965ee7f516c81f94bd0"
     }
   },
   {
@@ -877,7 +1114,7 @@
         "0"
       ],
       "fee": "5663600000000000",
-      "contractName": "GnosisSafeProxy",
+      "contractName": "GnosisSafeL2",
       "contractMethod": "execTransaction",
       "contractMethodABI": "{\"type\":\"function\",\"name\":\"execTransaction\",\"constant\":false,\"stateMutability\":\"payable\",\"payable\":true,\"inputs\":[{\"type\":\"address\",\"name\":\"to\"},{\"type\":\"uint256\",\"name\":\"value\"},{\"type\":\"bytes\",\"name\":\"data\"},{\"type\":\"uint8\",\"name\":\"operation\"},{\"type\":\"uint256\",\"name\":\"safeTxGas\"},{\"type\":\"uint256\",\"name\":\"baseGas\"},{\"type\":\"uint256\",\"name\":\"gasPrice\"},{\"type\":\"address\",\"name\":\"gasToken\"},{\"type\":\"address\",\"name\":\"refundReceiver\"},{\"type\":\"bytes\",\"name\":\"signatures\"}],\"outputs\":[{\"type\":\"bool\",\"name\":\"\"}]}",
       "contractData": "0x6a761202000000000000000000000000b5dd6ca7b14bd7d2b6e296983d0aa0d373979cfe0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000014000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001e00000000000000000000000000000000000000000000000000000000000000064e318b52b0000000000000000000000000000000000000000000000000000000000000001000000000000000000000000eb1f1a741f62cce4f0f55640e7cdf324d70ff08c000000000000000000000000371b3954528ec462351afb423c8f4c653a1adff10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c30000000000000000000000002c085de8ed404783071367ead5c41e20adf61b000000000000000000000000000000000000000000000000000000000000000000016389ceaeb5d76092647fa76bd9932ba23326148d9c2d94b2f9cf2583388c6dc9168ec49b4d0059f0f1bf61d51ebedebddf24f8f992a9e8684b50766978e1bf9e1c100c19e005d6f4c874ae29664beca9947e3b6eddc480eff4a4733deef7f75f08780b8182ec2f7e872053f82c60e207e79a098b661ddabdde64c461c8164572501b0000000000000000000000000000000000000000000000000000000000",
@@ -925,7 +1162,91 @@
         }
       ],
       "safeTxData": {
-        "contractName": "GnosisSafeProxy",
+        "contractName": "GnosisSafeL2",
+        "contractMethod": "swapOwner",
+        "contractMethodABI": "{\"type\":\"function\",\"name\":\"swapOwner\",\"constant\":false,\"payable\":false,\"inputs\":[{\"type\":\"address\",\"name\":\"prevOwner\"},{\"type\":\"address\",\"name\":\"oldOwner\"},{\"type\":\"address\",\"name\":\"newOwner\"}],\"outputs\":[]}",
+        "isFlareNetworkContract": false,
+        "parameters": [
+          {
+            "name": "prevOwner",
+            "value": "0x0000000000000000000000000000000000000001"
+          },
+          {
+            "name": "oldOwner",
+            "value": "0xeB1F1A741f62CCe4F0F55640E7CdF324d70Ff08C"
+          },
+          {
+            "name": "newOwner",
+            "value": "0x371B3954528Ec462351afB423C8f4C653A1aDFF1"
+          }
+        ]
+      },
+      "warnings": [],
+      "messageToSign": "0x3f88033d61c41a771e3a1305378d315a0cb77e73806aa03d5c47f8971b995bef"
+    }
+  },
+  {
+    "txHex": "0x02f903100e07850ba43b7400850ba43b74008301ba7894b5dd6ca7b14bd7d2b6e296983d0aa0d373979cfe80b902e46a761202000000000000000000000000b5dd6ca7b14bd7d2b6e296983d0aa0d373979cfe0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000014000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001e00000000000000000000000000000000000000000000000000000000000000064e318b52b0000000000000000000000000000000000000000000000000000000000000001000000000000000000000000eb1f1a741f62cce4f0f55640e7cdf324d70ff08c000000000000000000000000371b3954528ec462351afb423c8f4c653a1adff10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c30000000000000000000000002c085de8ed404783071367ead5c41e20adf61b000000000000000000000000000000000000000000000000000000000000000000016389ceaeb5d76092647fa76bd9932ba23326148d9c2d94b2f9cf2583388c6dc9168ec49b4d0059f0f1bf61d51ebedebddf24f8f992a9e8684b50766978e1bf9e1c100c19e005d6f4c874ae29664beca9947e3b6eddc480eff4a4733deef7f75f08780b8182ec2f7e872053f82c60e207e79a098b661ddabdde64c461c8164572501b0000000000000000000000000000000000000000000000000000000000c0",
+    "txVerification": {
+      "network": "Flare Mainnet",
+      "type": "contractCallC",
+      "description": "Contract call on C-chain",
+      "recipients": [
+        "0xb5Dd6cA7b14bd7d2B6E296983D0AA0D373979CFE"
+      ],
+      "values": [
+        "0"
+      ],
+      "fee": "5663600000000000",
+      "contractName": "GnosisSafeL2",
+      "contractMethod": "execTransaction",
+      "contractMethodABI": "{\"type\":\"function\",\"name\":\"execTransaction\",\"constant\":false,\"stateMutability\":\"payable\",\"payable\":true,\"inputs\":[{\"type\":\"address\",\"name\":\"to\"},{\"type\":\"uint256\",\"name\":\"value\"},{\"type\":\"bytes\",\"name\":\"data\"},{\"type\":\"uint8\",\"name\":\"operation\"},{\"type\":\"uint256\",\"name\":\"safeTxGas\"},{\"type\":\"uint256\",\"name\":\"baseGas\"},{\"type\":\"uint256\",\"name\":\"gasPrice\"},{\"type\":\"address\",\"name\":\"gasToken\"},{\"type\":\"address\",\"name\":\"refundReceiver\"},{\"type\":\"bytes\",\"name\":\"signatures\"}],\"outputs\":[{\"type\":\"bool\",\"name\":\"\"}]}",
+      "contractData": "0x6a761202000000000000000000000000b5dd6ca7b14bd7d2b6e296983d0aa0d373979cfe0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000014000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001e00000000000000000000000000000000000000000000000000000000000000064e318b52b0000000000000000000000000000000000000000000000000000000000000001000000000000000000000000eb1f1a741f62cce4f0f55640e7cdf324d70ff08c000000000000000000000000371b3954528ec462351afb423c8f4c653a1adff10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c30000000000000000000000002c085de8ed404783071367ead5c41e20adf61b000000000000000000000000000000000000000000000000000000000000000000016389ceaeb5d76092647fa76bd9932ba23326148d9c2d94b2f9cf2583388c6dc9168ec49b4d0059f0f1bf61d51ebedebddf24f8f992a9e8684b50766978e1bf9e1c100c19e005d6f4c874ae29664beca9947e3b6eddc480eff4a4733deef7f75f08780b8182ec2f7e872053f82c60e207e79a098b661ddabdde64c461c8164572501b0000000000000000000000000000000000000000000000000000000000",
+      "isFlareNetworkContract": false,
+      "parameters": [
+        {
+          "name": "to",
+          "value": "0xb5Dd6cA7b14bd7d2B6E296983D0AA0D373979CFE"
+        },
+        {
+          "name": "value",
+          "value": "0"
+        },
+        {
+          "name": "data",
+          "value": "0xe318b52b0000000000000000000000000000000000000000000000000000000000000001000000000000000000000000eb1f1a741f62cce4f0f55640e7cdf324d70ff08c000000000000000000000000371b3954528ec462351afb423c8f4c653a1adff1"
+        },
+        {
+          "name": "operation",
+          "value": "1"
+        },
+        {
+          "name": "safeTxGas",
+          "value": "0"
+        },
+        {
+          "name": "baseGas",
+          "value": "0"
+        },
+        {
+          "name": "gasPrice",
+          "value": "0"
+        },
+        {
+          "name": "gasToken",
+          "value": "0x0000000000000000000000000000000000000000"
+        },
+        {
+          "name": "refundReceiver",
+          "value": "0x0000000000000000000000000000000000000000"
+        },
+        {
+          "name": "signatures",
+          "value": "0x0000000000000000000000002c085de8ed404783071367ead5c41e20adf61b000000000000000000000000000000000000000000000000000000000000000000016389ceaeb5d76092647fa76bd9932ba23326148d9c2d94b2f9cf2583388c6dc9168ec49b4d0059f0f1bf61d51ebedebddf24f8f992a9e8684b50766978e1bf9e1c100c19e005d6f4c874ae29664beca9947e3b6eddc480eff4a4733deef7f75f08780b8182ec2f7e872053f82c60e207e79a098b661ddabdde64c461c8164572501b"
+        }
+      ],
+      "safeTxData": {
+        "contractName": "GnosisSafeL2",
         "contractMethod": "swapOwner",
         "contractMethodABI": "{\"type\":\"function\",\"name\":\"swapOwner\",\"constant\":false,\"payable\":false,\"inputs\":[{\"type\":\"address\",\"name\":\"prevOwner\"},{\"type\":\"address\",\"name\":\"oldOwner\"},{\"type\":\"address\",\"name\":\"newOwner\"}],\"outputs\":[]}",
         "isFlareNetworkContract": false,
@@ -945,9 +1266,95 @@
         ]
       },
       "warnings": [
-        "The recipient address is a proxy contract. Transaction parameters are decoded based on its speculated implementation."
+        "The smart account executes the called contract's code as its own (delegate call), giving that code full control over the account's assets and settings."
       ],
-      "messageToSign": "0x3f88033d61c41a771e3a1305378d315a0cb77e73806aa03d5c47f8971b995bef"
+      "messageToSign": "0xcdb056f6bc6a85e439fafbaa7c2e6c86bb1c1782713d4a6c75dd8ebc96823ec9"
+    }
+  },
+  {
+    "txHex": "0x02f903100e07850ba43b7400850ba43b74008301ba7894b5dd6ca7b14bd7d2b6e296983d0aa0d373979cfe80b902e46a761202000000000000000000000000b5dd6ca7b14bd7d2b6e296983d0aa0d373979cfe0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000014000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000005d21dba000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000111111111111111111111111111111111111111100000000000000000000000000000000000000000000000000000000000001e00000000000000000000000000000000000000000000000000000000000000064e318b52b0000000000000000000000000000000000000000000000000000000000000001000000000000000000000000eb1f1a741f62cce4f0f55640e7cdf324d70ff08c000000000000000000000000371b3954528ec462351afb423c8f4c653a1adff10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c30000000000000000000000002c085de8ed404783071367ead5c41e20adf61b000000000000000000000000000000000000000000000000000000000000000000016389ceaeb5d76092647fa76bd9932ba23326148d9c2d94b2f9cf2583388c6dc9168ec49b4d0059f0f1bf61d51ebedebddf24f8f992a9e8684b50766978e1bf9e1c100c19e005d6f4c874ae29664beca9947e3b6eddc480eff4a4733deef7f75f08780b8182ec2f7e872053f82c60e207e79a098b661ddabdde64c461c8164572501b0000000000000000000000000000000000000000000000000000000000c0",
+    "txVerification": {
+      "network": "Flare Mainnet",
+      "type": "contractCallC",
+      "description": "Contract call on C-chain",
+      "recipients": [
+        "0xb5Dd6cA7b14bd7d2B6E296983D0AA0D373979CFE"
+      ],
+      "values": [
+        "0"
+      ],
+      "fee": "5663600000000000",
+      "contractName": "GnosisSafeL2",
+      "contractMethod": "execTransaction",
+      "contractMethodABI": "{\"type\":\"function\",\"name\":\"execTransaction\",\"constant\":false,\"stateMutability\":\"payable\",\"payable\":true,\"inputs\":[{\"type\":\"address\",\"name\":\"to\"},{\"type\":\"uint256\",\"name\":\"value\"},{\"type\":\"bytes\",\"name\":\"data\"},{\"type\":\"uint8\",\"name\":\"operation\"},{\"type\":\"uint256\",\"name\":\"safeTxGas\"},{\"type\":\"uint256\",\"name\":\"baseGas\"},{\"type\":\"uint256\",\"name\":\"gasPrice\"},{\"type\":\"address\",\"name\":\"gasToken\"},{\"type\":\"address\",\"name\":\"refundReceiver\"},{\"type\":\"bytes\",\"name\":\"signatures\"}],\"outputs\":[{\"type\":\"bool\",\"name\":\"\"}]}",
+      "contractData": "0x6a761202000000000000000000000000b5dd6ca7b14bd7d2b6e296983d0aa0d373979cfe0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000014000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000005d21dba000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000111111111111111111111111111111111111111100000000000000000000000000000000000000000000000000000000000001e00000000000000000000000000000000000000000000000000000000000000064e318b52b0000000000000000000000000000000000000000000000000000000000000001000000000000000000000000eb1f1a741f62cce4f0f55640e7cdf324d70ff08c000000000000000000000000371b3954528ec462351afb423c8f4c653a1adff10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c30000000000000000000000002c085de8ed404783071367ead5c41e20adf61b000000000000000000000000000000000000000000000000000000000000000000016389ceaeb5d76092647fa76bd9932ba23326148d9c2d94b2f9cf2583388c6dc9168ec49b4d0059f0f1bf61d51ebedebddf24f8f992a9e8684b50766978e1bf9e1c100c19e005d6f4c874ae29664beca9947e3b6eddc480eff4a4733deef7f75f08780b8182ec2f7e872053f82c60e207e79a098b661ddabdde64c461c8164572501b0000000000000000000000000000000000000000000000000000000000",
+      "isFlareNetworkContract": false,
+      "parameters": [
+        {
+          "name": "to",
+          "value": "0xb5Dd6cA7b14bd7d2B6E296983D0AA0D373979CFE"
+        },
+        {
+          "name": "value",
+          "value": "0"
+        },
+        {
+          "name": "data",
+          "value": "0xe318b52b0000000000000000000000000000000000000000000000000000000000000001000000000000000000000000eb1f1a741f62cce4f0f55640e7cdf324d70ff08c000000000000000000000000371b3954528ec462351afb423c8f4c653a1adff1"
+        },
+        {
+          "name": "operation",
+          "value": "0"
+        },
+        {
+          "name": "safeTxGas",
+          "value": "0"
+        },
+        {
+          "name": "baseGas",
+          "value": "0"
+        },
+        {
+          "name": "gasPrice",
+          "value": "25000000000"
+        },
+        {
+          "name": "gasToken",
+          "value": "0x0000000000000000000000000000000000000000"
+        },
+        {
+          "name": "refundReceiver",
+          "value": "0x1111111111111111111111111111111111111111"
+        },
+        {
+          "name": "signatures",
+          "value": "0x0000000000000000000000002c085de8ed404783071367ead5c41e20adf61b000000000000000000000000000000000000000000000000000000000000000000016389ceaeb5d76092647fa76bd9932ba23326148d9c2d94b2f9cf2583388c6dc9168ec49b4d0059f0f1bf61d51ebedebddf24f8f992a9e8684b50766978e1bf9e1c100c19e005d6f4c874ae29664beca9947e3b6eddc480eff4a4733deef7f75f08780b8182ec2f7e872053f82c60e207e79a098b661ddabdde64c461c8164572501b"
+        }
+      ],
+      "safeTxData": {
+        "contractName": "GnosisSafeL2",
+        "contractMethod": "swapOwner",
+        "contractMethodABI": "{\"type\":\"function\",\"name\":\"swapOwner\",\"constant\":false,\"payable\":false,\"inputs\":[{\"type\":\"address\",\"name\":\"prevOwner\"},{\"type\":\"address\",\"name\":\"oldOwner\"},{\"type\":\"address\",\"name\":\"newOwner\"}],\"outputs\":[]}",
+        "isFlareNetworkContract": false,
+        "parameters": [
+          {
+            "name": "prevOwner",
+            "value": "0x0000000000000000000000000000000000000001"
+          },
+          {
+            "name": "oldOwner",
+            "value": "0xeB1F1A741f62CCe4F0F55640E7CdF324d70Ff08C"
+          },
+          {
+            "name": "newOwner",
+            "value": "0x371B3954528Ec462351afB423C8f4C653A1aDFF1"
+          }
+        ]
+      },
+      "warnings": [
+        "The smart account pays a gas refund from its own funds to another address."
+      ],
+      "messageToSign": "0x41c35202fed14594803f0cb03076dfac0239999cdb99a43bb8219ffe195327f5"
     }
   },
   {
@@ -1002,7 +1409,9 @@
       "contractName": "FAssetProxy",
       "contractData": "0xa9059cbb0000000000000000000000002389dccf94b9033f30973e0f9c1d09baf5258f0a0000000000000000000000000000000000000000000000000000000003938700",
       "isFlareNetworkContract": true,
-      "warnings": [],
+      "warnings": [
+        "The contract call could not be decoded, so the called method and its parameters cannot be verified."
+      ],
       "messageToSign": "0x8376ec632951311f0606f20be004f231896363bacad2f81b6349c0ba21cb7202"
     }
   },

@@ -1,11 +1,12 @@
 {
   "name": "@flarenetwork/flare-tx-verifier-lib",
-  "version": "1.4.0",
+  "version": "2.0.0",
   "description": "A library for verifying Flare C-chain and P-chain transactions.",
   "main": "dist/index.js",
   "files": [
     "/dist"
   ],
+  "exports": "./dist/index.js",
   "types": "dist/index.d.ts",
   "homepage": "https://github.com/flare-foundation/flare-tx-verifier-lib",
   "repository": {
@@ -14,22 +15,29 @@
   },
   "scripts": {
     "build": "rm -rf dist/ && tsc -b && cp -r ./build/src ./dist && rm -rf build",
-    "test": "ts-node ./test/index",
-    "verify": "ts-node ./scripts/verify",
-    "check": "biome check",
-    "check:fix": "biome check --write",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "lint:check": "biome lint .",
+    "lint:fix": "biome lint --write .",
+    "format:check": "biome format .",
+    "format:fix": "biome format --write .",
+    "check": "biome check .",
+    "check:fix": "biome check --write .",
+    "test": "tsx test/index",
+    "verify": "tsx scripts/verify"
   },
   "author": "Flare Network",
   "license": "MIT",
-  "devDependencies": {
-    "@biomejs/biome": "^2.5.10",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.9.3"
+  "engines": {
+    "node": ">=24.0.0"
   },
   "dependencies": {
-    "@flarenetwork/flarejs": "^4.1.1",
-    "ethers": "^6.16.0"
+    "@flarenetwork/flarejs": "5.2.0",
+    "ethers": "^6.17.0"
   },
-  "packageManager": "pnpm@11.24.0+sha512.bd27e345e976dcb0be0b7a1228217b049a817e21b1f355c90dbe7dc46671895a8bc1e6d06c24554505ea93ea0b45f489a27ec1bfbc8de6a9659fca0f16fa0000"
+  "devDependencies": {
+    "@biomejs/biome": "2.6.8",
+    "tsx": "^4.23.1",
+    "typescript": "^7.0.2"
+  },
+  "packageManager": "pnpm@12.18.0+sha512.9d7882d5dc82147ecfc4e062aa34834e0ad0296710a1837a1115ae012127d36b7109e321ac1598a1dd0a65597681b1e99917e12ed0d749eae91187943363beb3"
 }
